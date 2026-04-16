@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../components/context/AuthContext'
-import { hasSupabaseConfig } from '../../lib/supabase/client'
+import EnvironmentBanner from '../../components/common/EnvironmentBanner'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -42,11 +42,7 @@ export default function LoginPage() {
           <p style={{ fontSize:'13px', color:'#6b7280', margin:0 }}>Manage. Comply. Grow.</p>
         </div>
 
-        {!hasSupabaseConfig() && (
-          <div style={{ background:'#fffbeb', border:'1px solid #fde68a', borderRadius:'10px', padding:'10px 12px', fontSize:'13px', color:'#92400e', marginBottom:'16px' }}>
-            Supabase environment variables are missing. The app will stay in demo mode until they are configured.
-          </div>
-        )}
+        <EnvironmentBanner compact />
 
         <form onSubmit={handleLogin}>
           <div style={{ marginBottom:'16px' }}>

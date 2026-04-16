@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import EnvironmentBanner from '../components/common/EnvironmentBanner'
 
 export default function HomePage() {
   return (
@@ -15,7 +16,8 @@ export default function HomePage() {
           ZA COMPLIANT · CANNABIS CLUB POS
         </div>
         <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#111827', marginBottom: '12px', letterSpacing: '-0.5px' }}>CannaBuy POS</h1>
-        <p style={{ fontSize: '15px', color: '#6b7280', marginBottom: '36px', lineHeight: 1.6 }}>Point-of-sale platform for South African cannabis clubs. Manage members, inventory, and transactions with full SARS VAT compliance.</p>
+        <p style={{ fontSize: '15px', color: '#6b7280', marginBottom: '24px', lineHeight: 1.6 }}>Point-of-sale platform for South African cannabis clubs. Manage members, inventory, and transactions with full SARS VAT compliance.</p>
+        <EnvironmentBanner />
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
             { label: 'Dashboard', href: '/dashboard', desc: 'Revenue overview & live stats' },
