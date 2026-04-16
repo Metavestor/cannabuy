@@ -1,263 +1,124 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
 
-// Mock product data - in production this would come from Supabase
-const mockProducts = [
-  { id: '1', sku: 'FLW-001', name: 'Purple Haze', category: 'sativa', weight_grams: 28, unit_label: '28g', price_incl_vat_zar: 850.00, stock_qty: 150, reorder_threshold: 50, is_active: true },
-  { id: '2', sku: 'FLW-002', name: 'Northern Lights', category: 'indica', weight_grams: 28, unit_label: '28g', price_incl_vat_zar: 720.00, stock_qty: 85, reorder_threshold: 50, is_active: true },
-  { id: '3', sku: 'EDB-001', name: 'THC Gummies (10pk)', category: 'edible', weight_grams: 100, unit_label: '100g', price_incl_vat_zar: 350.00, stock_qty: 42, reorder_threshold: 20, is_active: true },
-  { id: '4', sku: 'CON-001', name: 'Water Hash', category: 'concentrate', weight_grams: 7, unit_label: '7g', price_incl_vat_zar: 1200.00, stock_qty: 8, reorder_threshold: 15, is_active: true },
-  { id: '5', sku: 'HYB-001', name: 'OG Kush', category: 'hybrid', weight_grams: 28, unit_label: '28g', price_incl_vat_zar: 780.00, stock_qty: 0, reorder_threshold: 50, is_active: true },
-  { id: '6', sku: 'WEL-001', name: 'CBD Oil 1000mg', category: 'wellness', weight_grams: 30, unit_label: '30ml', price_incl_vat_zar: 650.00, stock_qty: 65, reorder_threshold: 25, is_active: true },
+const products = [
+  { id: 1, sku: 'SKU-001', name: 'Purple Haze', category: 'Sativa', thc: '18%', cbd: '0.1%', stock: 28, price: 850, supplier: 'CannaCo ZA', status: 'Active' },
+  { id: 2, sku: 'SKU-002', name: 'Northern Lights', category: 'Indica', thc: '22%', cbd: '0.05%', stock: 14, price: 720, supplier: 'CannaCo ZA', status: 'Active' },
+  { id: 3, sku: 'SKU-003', name: 'OG Kush', category: 'Hybrid', thc: '24%', cbd: '0.1%', stock: 21, price: 780, supplier: 'GreenLeaf SA', status: 'Active' },
+  { id: 4, sku: 'SKU-004', name: 'THC Gummies', category: 'Edible', thc: '10mg', cbd: '0%', stock: 42, price: 350, supplier: 'SweetLeaf', status: 'Active' },
+  { id: 5, sku: 'SKU-005', name: 'Water Hash', category: 'Concentrate', thc: '65%', cbd: '0.3%', stock: 4, price: 1200, supplier: 'Hash House', status: 'Low Stock' },
+  { id: 6, sku: 'SKU-006', name: 'CBD Oil 1000mg', category: 'Wellness', thc: '0%', cbd: '1000mg', stock: 35, price: 650, supplier: 'CannaCo ZA', status: 'Active' },
+  { id: 7, sku: 'SKU-007', name: 'Sour Diesel', category: 'Sativa', thc: '19%', cbd: '0.05%', stock: 0, price: 890, supplier: 'GreenLeaf SA', status: 'Out of Stock' },
+  { id: 8, sku: 'SKU-008', name: 'Blue Cheese', category: 'Indica', thc: '20%', cbd: '0.1%', stock: 17, price: 810, supplier: 'CannaCo ZA', status: 'Active' },
 ]
 
-const categories = ['sativa', 'indica', 'hybrid', 'concentrate', 'edible', 'wellness', 'processed']
-
 export default function ProductsPage() {
-  const [products, setProducts] = useState(mockProducts)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('all')
-  const [showModal, setShowModal] = useState(false)
-  const [editingProduct, setEditingProduct] = useState<any>(null)
-  const [formData, setFormData] = useState({
-    sku: '', name: '', category: 'sativa', weight_grams: 28, unit_label: '28g',
-    price_incl_vat_zar: 0, stock_qty: 0, reorder_threshold: 50, is_active: true
-  })
-
-  const filteredProducts = products.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.sku.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter
-    return matchesSearch && matchesCategory
-  })
-
-  const lowStockCount = products.filter(p => p.stock_qty < p.reorder_threshold && p.stock_qty > 0).length
-  const outOfStockCount = products.filter(p => p.stock_qty === 0).length
-
-  const handleEdit = (product: any) => {
-    setEditingProduct(product)
-    setFormData({ ...product })
-    setShowModal(true)
-  }
-
-  const handleAdd = () => {
-    setEditingProduct(null)
-    setFormData({ sku: '', name: '', category: 'sativa', weight_grams: 28, unit_label: '28g',
-      price_incl_vat_zar: 0, stock_qty: 0, reorder_threshold: 50, is_active: true })
-    setShowModal(true)
-  }
-
-  const handleSave = () => {
-    if (editingProduct) {
-      setProducts(products.map(p => p.id === editingProduct.id ? { ...formData, id: p.id } : p))
-    } else {
-      setProducts([...products, { ...formData, id: String(Date.now()) }])
-    }
-    setShowModal(false)
-  }
-
-  const handleDelete = (id: string) => {
-    if (confirm('Delete this product?')) {
-      setProducts(products.filter(p => p.id !== id))
-    }
-  }
-
-  const getStockStatus = (product: any) => {
-    if (product.stock_qty === 0) return { label: 'Out of Stock', color: '#dc2626', bg: '#fef2f2' }
-    if (product.stock_qty < product.reorder_threshold) return { label: 'Low Stock', color: '#d97706', bg: '#fffbeb' }
-    return { label: 'In Stock', color: '#059669', bg: '#ecfdf5' }
-  }
-
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
-      <aside style={{ width: '240px', background: '#1a1a2e', borderRight: '0.5px solid #2a2a3e', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-        <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #2a2a3e' }}>
-          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '160px', height: 'auto', display: 'block' }} />
-          <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px', letterSpacing: '0.3px' }}>Cannabis Club Management</div>
-          <div style={{ display: 'inline-block', marginTop: '6px', background: '#16213e', color: '#4ade80', fontSize: '9px', fontWeight: '700', padding: '3px 8px', borderRadius: '4px', letterSpacing: '0.5px', border: '1px solid #1a3a2a' }}>ZA COMPLIANT</div>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#0f1923' }}>
+      {/* Sidebar */}
+      <aside style={{ width: '260px', background: '#0a0f14', display: 'flex', flexDirection: 'column', flexShrink: 0, borderRight: '1px solid #1a2535' }}>
+        <div style={{ padding: '28px 20px 24px', borderBottom: '1px solid #1a2535' }}>
+          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid #1a2535' }}>
+            <div style={{ fontSize: '10px', color: '#3d4f63', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>Cannabis Club Management</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '10px', background: '#0d1f12', color: '#22c55e', fontSize: '9px', fontWeight: 700, padding: '5px 10px', borderRadius: '3px', letterSpacing: '0.8px', border: '1px solid #1a3322' }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }}></span>
+              ZA COMPLIANT
+            </div>
+          </div>
         </div>
-        <nav style={{ padding: '10px 8px', flex: 1 }}>
+        <nav style={{ padding: '20px 12px', flex: 1 }}>
+          <div style={{ fontSize: '9px', color: '#2a3a50', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, padding: '0 12px', marginBottom: '10px' }}>Navigation</div>
           {[
-            { label: 'Dashboard', href: '/dashboard', icon: '▦', active: false },
-            { label: 'Members', href: '/members', icon: '👥', active: false },
-            { label: 'Inventory', href: '/inventory', icon: '📦', active: false },
-            { label: 'Point of Sale', href: '/pos', icon: '🧾', active: false },
-            { label: 'Products', href: '/admin/products', icon: '📋', active: true },
-            { label: 'Transactions', href: '/transactions', icon: '📊', active: false },
-          ].map((item: any) => (
-            <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '6px', marginBottom: '2px', fontSize: '13px', background: item.active ? '#4ade80' : 'transparent', color: item.active ? '#1a1a2e' : '#9ca3af', fontWeight: item.active ? '600' : '400' }}>
-                <span style={{ fontSize: '14px', width: '18px', textAlign: 'center' }}>{item.icon}</span>
+            { label: 'Dashboard', href: '/dashboard', icon: '◫', active: false },
+            { label: 'Members', href: '/members', icon: '◉', active: false },
+            { label: 'Inventory', href: '/inventory', icon: '◈', active: false },
+            { label: 'Point of Sale', href: '/pos', icon: '◇', active: false },
+            { label: 'Products', href: '/admin/products', icon: '◆', active: true },
+            { label: 'Transactions', href: '/transactions', icon: '▣', active: false },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block', marginBottom: '3px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '11px', padding: '10px 12px', borderRadius: '6px', fontSize: '13px', background: item.active ? '#0f2a1a' : 'transparent', color: item.active ? '#22c55e' : '#4a6080', fontWeight: item.active ? 600 : 400, borderLeft: item.active ? '2px solid #22c55e' : '2px solid transparent', transition: 'all 0.15s ease' }}>
+                <span style={{ fontSize: '13px', width: '18px', textAlign: 'center', opacity: item.active ? 1 : 0.5 }}>{item.icon}</span>
                 {item.label}
               </div>
             </Link>
           ))}
         </nav>
-        <div style={{ padding: '12px 16px', borderTop: '1px solid #2a2a3e', fontSize: '11px', color: '#6b7280' }}>v1.0 · South Africa</div>
+        <div style={{ padding: '20px 20px', borderTop: '1px solid #1a2535' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: '#2a3a50' }}>CannaBuy POS</div>
+          <div style={{ fontSize: '10px', color: '#1e2d3d', marginTop: '3px' }}>v1.0 · South Africa</div>
+        </div>
       </aside>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <header style={{ background: 'white', borderBottom: '0.5px solid #e5e7eb', padding: '0 24px', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: '15px', fontWeight: '600' }}>Product Management</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {(lowStockCount > 0 || outOfStockCount > 0) && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: outOfStockCount > 0 ? '#fef2f2' : '#fffbeb', color: outOfStockCount > 0 ? '#dc2626' : '#d97706', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' }}>
-                {outOfStockCount > 0 && `${outOfStockCount} Out of Stock`}
-                {lowStockCount > 0 && `${lowStockCount} Low Stock`}
-              </div>
-            )}
-            <button onClick={handleAdd} style={{ background: '#1a7a4a', color: 'white', border: 'none', padding: '7px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>+ Add Product</button>
+      {/* Main Content */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <header style={{ background: '#0a0f14', borderBottom: '1px solid #1a2535', padding: '0 28px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: '16px', fontWeight: 700, color: '#e2e8f0' }}>Product Catalogue</div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button style={{ background: '#0f1923', border: '1px solid #1a2535', borderRadius: '6px', color: '#4a6080', fontSize: '11px', fontWeight: 600, padding: '7px 14px', cursor: 'pointer' }}>Import</button>
+            <button style={{ background: '#22c55e', border: 'none', borderRadius: '6px', color: '#0a0f14', fontSize: '12px', fontWeight: 700, padding: '8px 16px', cursor: 'pointer' }}>+ Add Product</button>
           </div>
         </header>
 
-        <div style={{ padding: '24px', flex: 1 }}>
-          {/* Filters */}
-          <div style={{ background: 'white', border: '0.5px solid #e5e7eb', borderRadius: '12px', padding: '16px 20px', marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <input
-              type="text"
-              placeholder="Search by name or SKU..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ width: '280px', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
-            />
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none', cursor: 'pointer' }}
-            >
-              <option value="all">All Categories</option>
-              {categories.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
-            </select>
-            <div style={{ marginLeft: 'auto', fontSize: '13px', color: '#6b7280' }}>
-              {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
-            </div>
+        <main style={{ padding: '28px', flex: 1 }}>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
+            {[
+              { label: 'Total Products', value: '48', sub: 'In catalogue' },
+              { label: 'Active Products', value: '43', sub: 'Available for sale' },
+              { label: 'Categories', value: '6', sub: 'Product types' },
+              { label: 'Avg Price', value: 'R 762', sub: 'Per unit' },
+            ].map(s => (
+              <div key={s.label} style={{ background: '#0a0f14', border: '1px solid #1a2535', borderRadius: '10px', padding: '18px 20px' }}>
+                <div style={{ fontSize: '11px', color: '#3d4f63', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>{s.label}</div>
+                <div style={{ fontSize: '26px', fontWeight: 700, color: '#e2e8f0', marginBottom: '4px' }}>{s.value}</div>
+                <div style={{ fontSize: '11px', color: '#4a6080' }}>{s.sub}</div>
+              </div>
+            ))}
           </div>
 
-          {/* Products Table */}
-          <div style={{ background: 'white', border: '0.5px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ background: '#f9fafb', borderBottom: '0.5px solid #e5e7eb' }}>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>SKU</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Product</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Category</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Price (ZAR)</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Stock</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Status</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProducts.map(product => {
-                  const status = getStockStatus(product)
-                  return (
-                    <tr key={product.id} style={{ borderBottom: '0.5px solid #f3f4f6' }}>
-                      <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace' }}>{product.sku}</td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <div style={{ fontSize: '13px', fontWeight: '500' }}>{product.name}</div>
-                        <div style={{ fontSize: '11px', color: '#9ca3af' }}>{product.weight_grams}{product.unit_label}</div>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: '#f3f4f6', color: '#4b5563' }}>
-                          {product.category}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'right', fontSize: '13px', fontWeight: '500' }}>
-                        R {product.price_incl_vat_zar.toFixed(2)}
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'right', fontSize: '13px' }}>
-                        <span style={{ fontWeight: '600' }}>{product.stock_qty}</span>
-                        <span style={{ fontSize: '11px', color: '#9ca3af' }}> / min {product.reorder_threshold}</span>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <span style={{ display: 'inline-block', padding: '2px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '500', background: status.bg, color: status.color }}>
-                          {status.label}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <button onClick={() => handleEdit(product)} style={{ background: 'none', border: 'none', color: '#1a7a4a', fontSize: '12px', fontWeight: '500', cursor: 'pointer', marginRight: '12px' }}>Edit</button>
-                        <button onClick={() => handleDelete(product.id)} style={{ background: 'none', border: 'none', color: '#dc2626', fontSize: '12px', fontWeight: '500', cursor: 'pointer' }}>Delete</button>
-                      </td>
-                    </tr>
-                  )
-                })}
-                {filteredProducts.length === 0 && (
-                  <tr>
-                    <td colSpan={7} style={{ padding: '40px 16px', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
-                      No products found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          {/* Category Pills */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            {['All Products', 'Sativa', 'Indica', 'Hybrid', 'Edible', 'Concentrate', 'Wellness'].map((cat, i) => (
+              <button key={cat} style={{ padding: '7px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', background: i === 0 ? '#22c55e' : '#0a0f14', color: i === 0 ? '#0a0f14' : '#4a6080', border: `1px solid ${i === 0 ? '#22c55e' : '#1a2535'}`, transition: 'all 0.15s' }}>{cat}</button>
+            ))}
           </div>
-        </div>
+
+          {/* Products Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+            {products.map(p => {
+              const statusStyle = p.status === 'Active' ? { bg: '#0d1f12', border: '#1a3322', text: '#22c55e' } : p.status === 'Low Stock' ? { bg: '#1a150a', border: '#3d2a0a', text: '#f59e0b' } : { bg: '#1f0a0a', border: '#3d1515', text: '#ef4444' }
+              return (
+                <div key={p.id} style={{ background: '#0a0f14', border: '1px solid #1a2535', borderRadius: '10px', padding: '20px', position: 'relative' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                    <div style={{ width: '44px', height: '44px', background: '#0f1923', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                      {p.category === 'Edible' ? '🍬' : p.category === 'Wellness' ? '💧' : p.category === 'Concentrate' ? '🧊' : '🌿'}
+                    </div>
+                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '3px', background: statusStyle.bg, color: statusStyle.text, border: `1px solid ${statusStyle.border}` }}>{p.status.toUpperCase()}</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#3d4f63', fontWeight: 600, marginBottom: '4px', letterSpacing: '0.3px' }}>{p.sku} · {p.category}</div>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#e2e8f0', marginBottom: '12px' }}>{p.name}</div>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '3px', background: '#0f1923', color: '#22c55e', border: '1px solid #1a2535' }}>THC {p.thc}</span>
+                    <span style={{ fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '3px', background: '#0f1923', color: '#60a5fa', border: '1px solid #1a2535' }}>CBD {p.cbd}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: '14px', borderTop: '1px solid #1a2535' }}>
+                    <div>
+                      <div style={{ fontSize: '10px', color: '#3d4f63', marginBottom: '2px' }}>Stock</div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: p.stock === 0 ? '#ef4444' : p.stock < 10 ? '#f59e0b' : '#e2e8f0' }}>{p.stock} units</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '10px', color: '#3d4f63', marginBottom: '2px' }}>Price</div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#e2e8f0' }}>R {p.price}</div>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '12px', fontSize: '10px', color: '#3d4f63' }}>Supplier: {p.supplier}</div>
+                </div>
+              )
+            })}
+          </div>
+        </main>
       </div>
-
-      {/* Add/Edit Modal */}
-      {showModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', width: '480px', maxHeight: '80vh', overflow: 'auto' }}>
-            <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>{editingProduct ? 'Edit Product' : 'Add New Product'}</div>
-            
-            <div style={{ display: 'grid', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '4px' }}>SKU</label>
-                <input type="text" value={formData.sku} onChange={e => setFormData({...formData, sku: e.target.value})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '4px' }}>Product Name</label>
-                <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px' }} />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '4px' }}>Category</label>
-                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px' }}>
-                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '4px' }}>Weight (g)</label>
-                  <input type="number" value={formData.weight_grams} onChange={e => setFormData({...formData, weight_grams: Number(e.target.value)})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px' }} />
-                </div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '4px' }}>Price (ZAR incl VAT)</label>
-                  <input type="number" step="0.01" value={formData.price_incl_vat_zar} onChange={e => setFormData({...formData, price_incl_vat_zar: Number(e.target.value)})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '4px' }}>Unit Label</label>
-                  <input type="text" value={formData.unit_label} onChange={e => setFormData({...formData, unit_label: e.target.value})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px' }} />
-                </div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '4px' }}>Stock Qty</label>
-                  <input type="number" value={formData.stock_qty} onChange={e => setFormData({...formData, stock_qty: Number(e.target.value)})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#6b7280', marginBottom: '4px' }}>Reorder Threshold</label>
-                  <input type="number" value={formData.reorder_threshold} onChange={e => setFormData({...formData, reorder_threshold: Number(e.target.value)})} style={{ width: '100%', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px' }} />
-                </div>
-              </div>
-              {editingProduct && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input type="checkbox" id="is_active" checked={formData.is_active} onChange={e => setFormData({...formData, is_active: e.target.checked})} />
-                  <label htmlFor="is_active" style={{ fontSize: '13px' }}>Product is active</label>
-                </div>
-              )}
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setShowModal(false)} style={{ padding: '8px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', fontWeight: '500', cursor: 'pointer', background: 'white' }}>Cancel</button>
-              <button onClick={handleSave} style={{ padding: '8px 16px', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', background: '#1a7a4a', color: 'white' }}>Save Product</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -1,261 +1,112 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
 
-const mockMembers = [
-  { id: '1', member_number: 'MBR-001', first_name: 'John', last_name: 'Smith', id_number: '890123****6789', phone: '0821234567', email: 'john.smith@email.com', membership_tier: 'premium', monthly_gram_limit: 200, status: 'active', fica_status: 'verified', joined_at: '2024-01-15', total_visits: 42, monthly_usage: 85 },
-  { id: '2', member_number: 'MBR-002', first_name: 'Jane', last_name: 'Doe', id_number: '910101****5432', phone: '0832345678', email: 'jane.doe@email.com', membership_tier: 'standard', monthly_gram_limit: 100, status: 'active', fica_status: 'verified', joined_at: '2024-02-20', total_visits: 28, monthly_usage: 45 },
-  { id: '3', member_number: 'MBR-003', first_name: 'Mike', last_name: 'Johnson', id_number: '880202****8765', phone: '0843456789', email: 'mike.j@email.com', membership_tier: 'founding', monthly_gram_limit: 500, status: 'active', fica_status: 'verified', joined_at: '2023-11-01', total_visits: 156, monthly_usage: 320 },
-  { id: '4', member_number: 'MBR-004', first_name: 'Sarah', last_name: 'Williams', id_number: '900505****2341', phone: '0814567890', email: 'sarah.w@email.com', membership_tier: 'standard', monthly_gram_limit: 100, status: 'pending', fica_status: 'pending', joined_at: '2024-04-01', total_visits: 0, monthly_usage: 0 },
-  { id: '5', member_number: 'MBR-005', first_name: 'Tom', last_name: 'Brown', id_number: '870808****1122', phone: '0825678901', email: 'tom.b@email.com', membership_tier: 'premium', monthly_gram_limit: 200, status: 'suspended', fica_status: 'expired', joined_at: '2024-03-10', total_visits: 15, monthly_usage: 180 },
+const members = [
+  { id: 'M001', name: 'Thabo Molefe', idNumber: '9101225051182', status: 'Active', memberSince: '2024-01-15', visits: 42, totalSpend: 'R 18,450' },
+  { id: 'M002', name: 'Priya Kartik', idNumber: '8803025065183', status: 'Active', memberSince: '2024-02-20', visits: 31, totalSpend: 'R 12,800' },
+  { id: 'M003', name: 'Johan Snyman', idNumber: '8205155072189', status: 'Active', memberSince: '2024-01-08', visits: 58, totalSpend: 'R 24,100' },
+  { id: 'M004', name: 'Lisa Nkosi', idNumber: '9007205048187', status: 'Active', memberSince: '2024-03-11', visits: 19, totalSpend: 'R 7,250' },
+  { id: 'M005', name: 'David Rossouw', idNumber: '8711055033181', status: 'Pending', memberSince: '2025-04-10', visits: 0, totalSpend: 'R 0' },
+  { id: 'M006', name: 'Amara Diallo', idNumber: '9304156029184', status: 'Active', memberSince: '2024-04-02', visits: 27, totalSpend: 'R 11,500' },
 ]
 
-const membershipTiers = ['standard', 'premium', 'founding']
-
 export default function MembersPage() {
-  const [members] = useState(mockMembers)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [selectedMember, setSelectedMember] = useState<any>(null)
-
-  const filteredMembers = members.filter(m => {
-    const fullName = `${m.first_name} ${m.last_name}`.toLowerCase()
-    const matchesSearch = fullName.includes(searchQuery.toLowerCase()) || m.member_number.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || m.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
-
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case 'active': return { color: '#059669', bg: '#ecfdf5' }
-      case 'pending': return { color: '#d97706', bg: '#fffbeb' }
-      case 'suspended': return { color: '#dc2626', bg: '#fef2f2' }
-      default: return { color: '#6b7280', bg: '#f3f4f6' }
-    }
-  }
-
-  const getFicaStyle = (status: string) => {
-    switch (status) {
-      case 'verified': return { color: '#059669', bg: '#ecfdf5' }
-      case 'pending': return { color: '#d97706', bg: '#fffbeb' }
-      case 'expired': return { color: '#dc2626', bg: '#fef2f2' }
-      default: return { color: '#6b7280', bg: '#f3f4f6' }
-    }
-  }
-
-  const getUsagePercent = (usage: number, limit: number) => (usage / limit) * 100
-
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
-      <aside style={{ width: '240px', background: '#1a1a2e', borderRight: '0.5px solid #2a2a3e', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-        <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #2a2a3e' }}>
-          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '160px', height: 'auto', display: 'block' }} />
-          <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px', letterSpacing: '0.3px' }}>Cannabis Club Management</div>
-          <div style={{ display: 'inline-block', marginTop: '6px', background: '#16213e', color: '#4ade80', fontSize: '9px', fontWeight: '700', padding: '3px 8px', borderRadius: '4px', letterSpacing: '0.5px', border: '1px solid #1a3a2a' }}>ZA COMPLIANT</div>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#0f1923' }}>
+      {/* Sidebar */}
+      <aside style={{ width: '260px', background: '#0a0f14', display: 'flex', flexDirection: 'column', flexShrink: 0, borderRight: '1px solid #1a2535' }}>
+        <div style={{ padding: '28px 20px 24px', borderBottom: '1px solid #1a2535' }}>
+          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid #1a2535' }}>
+            <div style={{ fontSize: '10px', color: '#3d4f63', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>Cannabis Club Management</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '10px', background: '#0d1f12', color: '#22c55e', fontSize: '9px', fontWeight: 700, padding: '5px 10px', borderRadius: '3px', letterSpacing: '0.8px', border: '1px solid #1a3322' }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }}></span>
+              ZA COMPLIANT
+            </div>
+          </div>
         </div>
-        <nav style={{ padding: '10px 8px', flex: 1 }}>
+
+        <nav style={{ padding: '20px 12px', flex: 1 }}>
+          <div style={{ fontSize: '9px', color: '#2a3a50', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, padding: '0 12px', marginBottom: '10px' }}>Navigation</div>
           {[
-            { label: 'Dashboard', href: '/dashboard', icon: '▦', active: false },
-            { label: 'Members', href: '/members', icon: '👥', active: true },
-            { label: 'Inventory', href: '/inventory', icon: '📦', active: false },
-            { label: 'Point of Sale', href: '/pos', icon: '🧾', active: false },
-            { label: 'Products', href: '/admin/products', icon: '📋', active: false },
-            { label: 'Transactions', href: '/transactions', icon: '📊', active: false },
-          ].map((item: any) => (
-            <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '6px', marginBottom: '2px', fontSize: '13px', background: item.active ? '#4ade80' : 'transparent', color: item.active ? '#1a1a2e' : '#9ca3af', fontWeight: item.active ? '600' : '400' }}>
-                <span style={{ fontSize: '14px', width: '18px', textAlign: 'center' }}>{item.icon}</span>
+            { label: 'Dashboard', href: '/dashboard', icon: '◫', active: false },
+            { label: 'Members', href: '/members', icon: '◉', active: true },
+            { label: 'Inventory', href: '/inventory', icon: '◈', active: false },
+            { label: 'Point of Sale', href: '/pos', icon: '◇', active: false },
+            { label: 'Products', href: '/admin/products', icon: '◆', active: false },
+            { label: 'Transactions', href: '/transactions', icon: '▣', active: false },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block', marginBottom: '3px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '11px', padding: '10px 12px', borderRadius: '6px', fontSize: '13px', background: item.active ? '#0f2a1a' : 'transparent', color: item.active ? '#22c55e' : '#4a6080', fontWeight: item.active ? 600 : 400, borderLeft: item.active ? '2px solid #22c55e' : '2px solid transparent', transition: 'all 0.15s ease' }}>
+                <span style={{ fontSize: '13px', width: '18px', textAlign: 'center', opacity: item.active ? 1 : 0.5 }}>{item.icon}</span>
                 {item.label}
               </div>
             </Link>
           ))}
         </nav>
-        <div style={{ padding: '12px 16px', borderTop: '1px solid #2a2a3e', fontSize: '11px', color: '#6b7280' }}>v1.0 · South Africa</div>
+
+        <div style={{ padding: '20px 20px', borderTop: '1px solid #1a2535' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: '#2a3a50' }}>CannaBuy POS</div>
+          <div style={{ fontSize: '10px', color: '#1e2d3d', marginTop: '3px' }}>v1.0 · South Africa</div>
+        </div>
       </aside>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <header style={{ background: 'white', borderBottom: '0.5px solid #e5e7eb', padding: '0 24px', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: '15px', fontWeight: '600' }}>Member Management</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Link href="/members/new">
-              <button style={{ background: '#1a7a4a', color: 'white', border: 'none', padding: '7px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>+ Add Member</button>
-            </Link>
-          </div>
+      {/* Main Content */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <header style={{ background: '#0a0f14', borderBottom: '1px solid #1a2535', padding: '0 28px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: '16px', fontWeight: 700, color: '#e2e8f0' }}>Member Management</div>
+          <button style={{ background: '#22c55e', border: 'none', borderRadius: '6px', color: '#0a0f14', fontSize: '12px', fontWeight: 700, padding: '8px 16px', cursor: 'pointer' }}>+ Register New Member</button>
         </header>
 
-        <div style={{ padding: '24px', flex: 1 }}>
-          {/* Filters */}
-          <div style={{ background: 'white', border: '0.5px solid #e5e7eb', borderRadius: '12px', padding: '16px 20px', marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <input
-              type="text"
-              placeholder="Search by name or member number..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ width: '300px', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none', cursor: 'pointer' }}
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="suspended">Suspended</option>
-            </select>
-            <div style={{ marginLeft: 'auto', fontSize: '13px', color: '#6b7280' }}>
-              {filteredMembers.length} member{filteredMembers.length !== 1 ? 's' : ''}
-            </div>
+        <main style={{ padding: '28px', flex: 1 }}>
+          {/* Stats Row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
+            {[
+              { label: 'Total Members', value: '124', sub: '+4 this month' },
+              { label: 'Active Members', value: '118', sub: '95% active rate' },
+              { label: 'Pending Verification', value: '6', sub: 'Awaiting FICA' },
+              { label: 'Members Today', value: '8', sub: 'Checked in today' },
+            ].map(s => (
+              <div key={s.label} style={{ background: '#0a0f14', border: '1px solid #1a2535', borderRadius: '10px', padding: '18px 20px' }}>
+                <div style={{ fontSize: '11px', color: '#3d4f63', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>{s.label}</div>
+                <div style={{ fontSize: '26px', fontWeight: 700, color: '#e2e8f0', marginBottom: '4px' }}>{s.value}</div>
+                <div style={{ fontSize: '11px', color: '#22c55e' }}>{s.sub}</div>
+              </div>
+            ))}
           </div>
 
           {/* Members Table */}
-          <div style={{ background: 'white', border: '0.5px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+          <div style={{ background: '#0a0f14', border: '1px solid #1a2535', borderRadius: '10px', overflow: 'hidden' }}>
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid #1a2535', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>All Members</div>
+              <input placeholder="Search members..." style={{ background: '#0f1923', border: '1px solid #1a2535', borderRadius: '6px', padding: '7px 12px', fontSize: '12px', color: '#e2e8f0', width: '200px', outline: 'none' }} />
+            </div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#f9fafb', borderBottom: '0.5px solid #e5e7eb' }}>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Member #</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Name</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Contact</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Tier</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>FICA</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Status</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Monthly Usage</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Actions</th>
+                <tr style={{ background: '#0f1923' }}>
+                  {['ID', 'Name', 'ID Number', 'Status', 'Member Since', 'Visits', 'Total Spend'].map(h => (
+                    <th key={h} style={{ padding: '12px 20px', fontSize: '10px', fontWeight: 700, color: '#3d4f63', textTransform: 'uppercase', letterSpacing: '0.8px', textAlign: 'left', borderBottom: '1px solid #1a2535' }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {filteredMembers.map(member => {
-                  const statusStyle = getStatusStyle(member.status)
-                  const ficaStyle = getFicaStyle(member.fica_status)
-                  const usagePercent = getUsagePercent(member.monthly_usage, member.monthly_gram_limit)
-                  const isNearLimit = usagePercent >= 80
-
-                  return (
-                    <tr key={member.id} style={{ borderBottom: '0.5px solid #f3f4f6' }}>
-                      <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace' }}>{member.member_number}</td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <div style={{ fontSize: '13px', fontWeight: '500' }}>{member.first_name} {member.last_name}</div>
-                        <div style={{ fontSize: '11px', color: '#9ca3af' }}>ID: {member.id_number}</div>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <div style={{ fontSize: '12px' }}>{member.phone}</div>
-                        <div style={{ fontSize: '11px', color: '#9ca3af' }}>{member.email}</div>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', background: '#ede9fe', color: '#6d28d9', textTransform: 'capitalize' }}>
-                          {member.membership_tier}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <span style={{ display: 'inline-block', padding: '2px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '500', background: ficaStyle.bg, color: ficaStyle.color }}>
-                          {member.fica_status}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <span style={{ display: 'inline-block', padding: '2px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '500', background: statusStyle.bg, color: statusStyle.color }}>
-                          {member.status}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'right' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}>
-                          <div style={{ width: '60px', height: '6px', background: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
-                            <div style={{ width: `${Math.min(usagePercent, 100)}%`, height: '100%', background: isNearLimit ? (usagePercent >= 100 ? '#dc2626' : '#d97706') : '#1a7a4a', borderRadius: '3px' }} />
-                          </div>
-                          <span style={{ fontSize: '12px', fontWeight: '500', color: isNearLimit ? (usagePercent >= 100 ? '#dc2626' : '#d97706') : '#111' }}>
-                            {member.monthly_usage}/{member.monthly_gram_limit}g
-                          </span>
-                        </div>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <button onClick={() => setSelectedMember(member)} style={{ background: 'none', border: 'none', color: '#1a7a4a', fontSize: '12px', fontWeight: '500', cursor: 'pointer' }}>View</button>
-                      </td>
-                    </tr>
-                  )
-                })}
-                {filteredMembers.length === 0 && (
-                  <tr>
-                    <td colSpan={8} style={{ padding: '40px 16px', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
-                      No members found
+                {members.map((m, i) => (
+                  <tr key={m.id} style={{ borderBottom: i < members.length - 1 ? '1px solid #1a2535' : 'none', transition: 'background 0.1s' }}>
+                    <td style={{ padding: '14px 20px', fontSize: '12px', fontWeight: 600, color: '#22c55e' }}>{m.id}</td>
+                    <td style={{ padding: '14px 20px', fontSize: '13px', fontWeight: 500, color: '#e2e8f0' }}>{m.name}</td>
+                    <td style={{ padding: '14px 20px', fontSize: '12px', color: '#4a6080' }}>{m.idNumber}</td>
+                    <td style={{ padding: '14px 20px' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '3px', background: m.status === 'Active' ? '#0d1f12' : '#1a150a', color: m.status === 'Active' ? '#22c55e' : '#f59e0b', border: `1px solid ${m.status === 'Active' ? '#1a3322' : '#3d2a0a'}` }}>{m.status.toUpperCase()}</span>
                     </td>
+                    <td style={{ padding: '14px 20px', fontSize: '12px', color: '#4a6080' }}>{m.memberSince}</td>
+                    <td style={{ padding: '14px 20px', fontSize: '12px', color: '#4a6080' }}>{m.visits}</td>
+                    <td style={{ padding: '14px 20px', fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>{m.totalSpend}</td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
-
-          {/* Compliance Note */}
-          <div style={{ marginTop: '16px', padding: '12px 16px', background: '#fffbeb', border: '0.5px solid #fde68a', borderRadius: '8px', fontSize: '12px', color: '#92400e' }}>
-            <strong>SA Compliance:</strong> Monthly gram limits per membership tier — Standard: 100g | Premium: 200g | Founding: 500g. Members approaching 80% of limit are flagged.
-          </div>
-        </div>
+        </main>
       </div>
-
-      {/* Member Detail Modal */}
-      {selectedMember && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', width: '480px', maxHeight: '80vh', overflow: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-              <div>
-                <div style={{ fontSize: '18px', fontWeight: '600' }}>{selectedMember.first_name} {selectedMember.last_name}</div>
-                <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '2px' }}>{selectedMember.member_number}</div>
-              </div>
-              <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '500', background: getStatusStyle(selectedMember.status).bg, color: getStatusStyle(selectedMember.status).color }}>
-                {selectedMember.status}
-              </span>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-              <div>
-                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px' }}>ID Number</div>
-                <div style={{ fontSize: '13px' }}>{selectedMember.id_number}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px' }}>Phone</div>
-                <div style={{ fontSize: '13px' }}>{selectedMember.phone}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px' }}>Email</div>
-                <div style={{ fontSize: '13px' }}>{selectedMember.email}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '2px' }}>Member Since</div>
-                <div style={{ fontSize: '13px' }}>{selectedMember.joined_at}</div>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>Monthly Usage</span>
-                <span style={{ fontSize: '12px', fontWeight: '600' }}>{selectedMember.monthly_usage}g / {selectedMember.monthly_gram_limit}g</span>
-              </div>
-              <div style={{ height: '8px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${Math.min(getUsagePercent(selectedMember.monthly_usage, selectedMember.monthly_gram_limit), 100)}%`, height: '100%', background: getUsagePercent(selectedMember.monthly_usage, selectedMember.monthly_gram_limit) >= 80 ? '#d97706' : '#1a7a4a', borderRadius: '4px' }} />
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-              <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: '600' }}>{selectedMember.total_visits}</div>
-                <div style={{ fontSize: '11px', color: '#6b7280' }}>Total Visits</div>
-              </div>
-              <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: '600', textTransform: 'capitalize' }}>{selectedMember.membership_tier}</div>
-                <div style={{ fontSize: '11px', color: '#6b7280' }}>Tier</div>
-              </div>
-              <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: '600' }}>{selectedMember.monthly_gram_limit}g</div>
-                <div style={{ fontSize: '11px', color: '#6b7280' }}>Monthly Limit</div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setSelectedMember(null)} style={{ padding: '8px 16px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', fontWeight: '500', cursor: 'pointer', background: 'white' }}>Close</button>
-              <button style={{ padding: '8px 16px', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', background: '#1a7a4a', color: 'white' }}>Edit Member</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

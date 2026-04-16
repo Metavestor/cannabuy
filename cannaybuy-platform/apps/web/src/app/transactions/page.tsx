@@ -1,270 +1,137 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
 
-// Mock transaction data
-const mockTransactions = [
-  { id: '1', invoice_number: 'INV-2024-0001', member_name: 'John Smith', subtotal_excl_vat_zar: 739.13, vat_amount_zar: 110.87, total_incl_vat_zar: 850.00, payment_method: 'eft', status: 'completed', created_at: '2024-04-15 10:30:00' },
-  { id: '2', invoice_number: 'INV-2024-0002', member_name: 'Jane Doe', subtotal_excl_vat_zar: 304.35, vat_amount_zar: 45.65, total_incl_vat_zar: 350.00, payment_method: 'cash', status: 'completed', created_at: '2024-04-15 11:45:00' },
-  { id: '3', invoice_number: 'INV-2024-0003', member_name: 'Mike Johnson', subtotal_excl_vat_zar: 1043.48, vat_amount_zar: 156.52, total_incl_vat_zar: 1200.00, payment_method: 'snapscan', status: 'completed', created_at: '2024-04-15 14:20:00' },
-  { id: '4', invoice_number: 'INV-2024-0004', member_name: 'John Smith', subtotal_excl_vat_zar: 565.22, vat_amount_zar: 84.78, total_incl_vat_zar: 650.00, payment_method: 'eft', status: 'refunded', created_at: '2024-04-14 09:15:00' },
-  { id: '5', invoice_number: 'INV-2024-0005', member_name: 'Sarah Williams', subtotal_excl_vat_zar: 217.39, vat_amount_zar: 32.61, total_incl_vat_zar: 250.00, payment_method: 'yoco', status: 'pending', created_at: '2024-04-16 08:00:00' },
+const transactions = [
+  { id: 'TXN-7821', member: 'Thabo Molefe', items: 3, subtotal: 1080, vat: 162, total: 1242, payment: 'Cash', time: '14:32', date: '2026-04-16', status: 'Completed' },
+  { id: 'TXN-7820', member: 'Priya Kartik', items: 1, subtotal: 739, vat: 111, total: 850, payment: 'Card', time: '13:18', date: '2026-04-16', status: 'Completed' },
+  { id: 'TXN-7819', member: 'Johan Snyman', items: 5, subtotal: 1826, vat: 274, total: 2100, payment: 'Cash', time: '12:45', date: '2026-04-16', status: 'Completed' },
+  { id: 'TXN-7818', member: 'Lisa Nkosi', items: 2, subtotal: 852, vat: 128, total: 980, payment: 'Card', time: '11:22', date: '2026-04-16', status: 'Completed' },
+  { id: 'TXN-7817', member: 'David Rossouw', items: 4, subtotal: 1435, vat: 215, total: 1650, payment: 'Cash', time: '10:05', date: '2026-04-16', status: 'Completed' },
+  { id: 'TXN-7816', member: 'Amara Diallo', items: 2, subtotal: 1080, vat: 162, total: 1242, payment: 'Card', time: '09:30', date: '2026-04-15', status: 'Completed' },
 ]
 
-const mockLineItems: Record<string, Array<{ name: string; qty: number; price: number }>> = {
-  '1': [{ name: 'Purple Haze (28g)', qty: 1, price: 850.00 }],
-  '2': [{ name: 'THC Gummies (10pk)', qty: 1, price: 350.00 }],
-  '3': [{ name: 'Water Hash (7g)', qty: 1, price: 1200.00 }],
-  '4': [{ name: 'CBD Oil 1000mg', qty: 1, price: 650.00 }],
-  '5': [{ name: 'OG Kush (28g)', qty: 1, price: 250.00 }],
-}
-
 export default function TransactionsPage() {
-  const [transactions] = useState(mockTransactions)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [selectedTx, setSelectedTx] = useState<any>(null)
-
-  const filteredTx = transactions.filter(tx => {
-    const matchesSearch = tx.invoice_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.member_name.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || tx.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
-
-  const totalRevenue = transactions.filter(t => t.status === 'completed').reduce((sum, t) => sum + t.total_incl_vat_zar, 0)
-  const totalVAT = transactions.filter(t => t.status === 'completed').reduce((sum, t) => sum + t.vat_amount_zar, 0)
-
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case 'completed': return { color: '#059669', bg: '#ecfdf5' }
-      case 'pending': return { color: '#d97706', bg: '#fffbeb' }
-      case 'refunded': return { color: '#dc2626', bg: '#fef2f2' }
-      default: return { color: '#6b7280', bg: '#f3f4f6' }
-    }
-  }
-
-  const getMethodIcon = (method: string) => {
-    switch (method) {
-      case 'eft': return '🏦'
-      case 'cash': return '💵'
-      case 'snapscan': return '📱'
-      case 'yoco': return '💳'
-      case 'payfast': return '🔒'
-      default: return '💰'
-    }
-  }
+  const todayTotal = transactions.filter(t => t.date === '2026-04-16').reduce((s, t) => s + t.total, 0)
+  const todayVat = transactions.filter(t => t.date === '2026-04-16').reduce((s, t) => s + t.vat, 0)
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
-      <aside style={{ width: '240px', background: '#1a1a2e', borderRight: '0.5px solid #2a2a3e', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-        <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #2a2a3e' }}>
-          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '160px', height: 'auto', display: 'block' }} />
-          <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px', letterSpacing: '0.3px' }}>Cannabis Club Management</div>
-          <div style={{ display: 'inline-block', marginTop: '6px', background: '#16213e', color: '#4ade80', fontSize: '9px', fontWeight: '700', padding: '3px 8px', borderRadius: '4px', letterSpacing: '0.5px', border: '1px solid #1a3a2a' }}>ZA COMPLIANT</div>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#0f1923' }}>
+      {/* Sidebar */}
+      <aside style={{ width: '260px', background: '#0a0f14', display: 'flex', flexDirection: 'column', flexShrink: 0, borderRight: '1px solid #1a2535' }}>
+        <div style={{ padding: '28px 20px 24px', borderBottom: '1px solid #1a2535' }}>
+          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid #1a2535' }}>
+            <div style={{ fontSize: '10px', color: '#3d4f63', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>Cannabis Club Management</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '10px', background: '#0d1f12', color: '#22c55e', fontSize: '9px', fontWeight: 700, padding: '5px 10px', borderRadius: '3px', letterSpacing: '0.8px', border: '1px solid #1a3322' }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }}></span>
+              ZA COMPLIANT
+            </div>
+          </div>
         </div>
-        <nav style={{ padding: '10px 8px', flex: 1 }}>
+        <nav style={{ padding: '20px 12px', flex: 1 }}>
+          <div style={{ fontSize: '9px', color: '#2a3a50', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, padding: '0 12px', marginBottom: '10px' }}>Navigation</div>
           {[
-            { label: 'Dashboard', href: '/dashboard', icon: '▦', active: false },
-            { label: 'Members', href: '/members', icon: '👥', active: false },
-            { label: 'Inventory', href: '/inventory', icon: '📦', active: false },
-            { label: 'Point of Sale', href: '/pos', icon: '🧾', active: false },
-            { label: 'Products', href: '/admin/products', icon: '📋', active: false },
-            { label: 'Transactions', href: '/transactions', icon: '📊', active: true },
-          ].map((item: any) => (
-            <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '6px', marginBottom: '2px', fontSize: '13px', background: item.active ? '#4ade80' : 'transparent', color: item.active ? '#1a1a2e' : '#9ca3af', fontWeight: item.active ? '600' : '400' }}>
-                <span style={{ fontSize: '14px', width: '18px', textAlign: 'center' }}>{item.icon}</span>
+            { label: 'Dashboard', href: '/dashboard', icon: '◫', active: false },
+            { label: 'Members', href: '/members', icon: '◉', active: false },
+            { label: 'Inventory', href: '/inventory', icon: '◈', active: false },
+            { label: 'Point of Sale', href: '/pos', icon: '◇', active: false },
+            { label: 'Products', href: '/admin/products', icon: '◆', active: false },
+            { label: 'Transactions', href: '/transactions', icon: '▣', active: true },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block', marginBottom: '3px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '11px', padding: '10px 12px', borderRadius: '6px', fontSize: '13px', background: item.active ? '#0f2a1a' : 'transparent', color: item.active ? '#22c55e' : '#4a6080', fontWeight: item.active ? 600 : 400, borderLeft: item.active ? '2px solid #22c55e' : '2px solid transparent', transition: 'all 0.15s ease' }}>
+                <span style={{ fontSize: '13px', width: '18px', textAlign: 'center', opacity: item.active ? 1 : 0.5 }}>{item.icon}</span>
                 {item.label}
               </div>
             </Link>
           ))}
         </nav>
-        <div style={{ padding: '12px 16px', borderTop: '1px solid #2a2a3e', fontSize: '11px', color: '#6b7280' }}>v1.0 · South Africa</div>
+        <div style={{ padding: '20px 20px', borderTop: '1px solid #1a2535' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: '#2a3a50' }}>CannaBuy POS</div>
+          <div style={{ fontSize: '10px', color: '#1e2d3d', marginTop: '3px' }}>v1.0 · South Africa</div>
+        </div>
       </aside>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <header style={{ background: 'white', borderBottom: '0.5px solid #e5e7eb', padding: '0 24px', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: '15px', fontWeight: '600' }}>Transactions</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#e8f5ef', color: '#1a7a4a', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#1a7a4a', display: 'inline-block' }} />
-              System Active
-            </div>
+      {/* Main Content */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        <header style={{ background: '#0a0f14', borderBottom: '1px solid #1a2535', padding: '0 28px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: '16px', fontWeight: 700, color: '#e2e8f0' }}>Transaction History</div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button style={{ background: '#0f1923', border: '1px solid #1a2535', borderRadius: '6px', color: '#4a6080', fontSize: '11px', fontWeight: 600, padding: '7px 14px', cursor: 'pointer' }}>Export CSV</button>
+            <button style={{ background: '#0f1923', border: '1px solid #1a2535', borderRadius: '6px', color: '#4a6080', fontSize: '11px', fontWeight: 600, padding: '7px 14px', cursor: 'pointer' }}>Print Report</button>
           </div>
         </header>
 
-        <div style={{ padding: '24px', flex: 1 }}>
-          {/* Summary Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '20px' }}>
-            <div style={{ background: '#f0faf4', borderRadius: '10px', padding: '16px', border: '0.5px solid #d1fae5' }}>
-              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '6px' }}>Total Revenue (VAT Incl)</div>
-              <div style={{ fontSize: '24px', fontWeight: '600', color: '#111' }}>R {totalRevenue.toFixed(2)}</div>
-            </div>
-            <div style={{ background: '#fef3c7', borderRadius: '10px', padding: '16px', border: '0.5px solid #fde68a' }}>
-              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '6px' }}>VAT Collected (15%)</div>
-              <div style={{ fontSize: '24px', fontWeight: '600', color: '#111' }}>R {totalVAT.toFixed(2)}</div>
-            </div>
-            <div style={{ background: '#f3f4f6', borderRadius: '10px', padding: '16px', border: '0.5px solid #e5e7eb' }}>
-              <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '6px' }}>Total Transactions</div>
-              <div style={{ fontSize: '24px', fontWeight: '600', color: '#111' }}>{transactions.length}</div>
-            </div>
-          </div>
-
-          {/* Filters */}
-          <div style={{ background: 'white', border: '0.5px solid #e5e7eb', borderRadius: '12px', padding: '16px 20px', marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <input
-              type="text"
-              placeholder="Search invoice or member..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ width: '260px', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none', cursor: 'pointer' }}
-            >
-              <option value="all">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="pending">Pending</option>
-              <option value="refunded">Refunded</option>
-            </select>
+        <main style={{ padding: '28px', flex: 1 }}>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
+            {[
+              { label: "Today's Revenue", value: `R ${todayTotal.toLocaleString()}`, sub: 'Gross total incl. VAT' },
+              { label: "Today's VAT", value: `R ${todayVat.toLocaleString()}`, sub: '15% SARS liability' },
+              { label: 'Transactions Today', value: '5', sub: 'Completed sales' },
+              { label: 'Avg Transaction', value: 'R 1,164', sub: 'Per transaction' },
+            ].map(s => (
+              <div key={s.label} style={{ background: '#0a0f14', border: '1px solid #1a2535', borderRadius: '10px', padding: '18px 20px' }}>
+                <div style={{ fontSize: '11px', color: '#3d4f63', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>{s.label}</div>
+                <div style={{ fontSize: '26px', fontWeight: 700, color: '#e2e8f0', marginBottom: '4px' }}>{s.value}</div>
+                <div style={{ fontSize: '11px', color: '#4a6080' }}>{s.sub}</div>
+              </div>
+            ))}
           </div>
 
           {/* Transactions Table */}
-          <div style={{ background: 'white', border: '0.5px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+          <div style={{ background: '#0a0f14', border: '1px solid #1a2535', borderRadius: '10px', overflow: 'hidden' }}>
+            <div style={{ padding: '16px 24px', borderBottom: '1px solid #1a2535', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>All Transactions</div>
+              <input placeholder="Search transactions..." style={{ background: '#0f1923', border: '1px solid #1a2535', borderRadius: '6px', padding: '7px 12px', fontSize: '12px', color: '#e2e8f0', width: '200px', outline: 'none' }} />
+            </div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#f9fafb', borderBottom: '0.5px solid #e5e7eb' }}>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Invoice</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Member</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Date</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Payment</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Subtotal</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>VAT</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Total</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Status</th>
-                  <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: '600', color: '#6b7280' }}>Actions</th>
+                <tr style={{ background: '#0f1923' }}>
+                  {['TXN ID', 'Date & Time', 'Member', 'Items', 'Subtotal', 'VAT (15%)', 'Total', 'Payment', 'Status'].map(h => (
+                    <th key={h} style={{ padding: '12px 16px', fontSize: '10px', fontWeight: 700, color: '#3d4f63', textTransform: 'uppercase', letterSpacing: '0.8px', textAlign: 'left', borderBottom: '1px solid #1a2535' }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {filteredTx.map(tx => {
-                  const statusStyle = getStatusStyle(tx.status)
-                  return (
-                    <tr key={tx.id} style={{ borderBottom: '0.5px solid #f3f4f6' }}>
-                      <td style={{ padding: '12px 16px', fontSize: '13px', fontFamily: 'monospace', fontWeight: '500' }}>{tx.invoice_number}</td>
-                      <td style={{ padding: '12px 16px', fontSize: '13px' }}>{tx.member_name}</td>
-                      <td style={{ padding: '12px 16px', fontSize: '13px', color: '#6b7280' }}>{tx.created_at}</td>
-                      <td style={{ padding: '12px 16px', fontSize: '13px' }}>
-                        <span style={{ marginRight: '4px' }}>{getMethodIcon(tx.payment_method)}</span>
-                        {tx.payment_method.toUpperCase()}
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'right', fontSize: '13px' }}>R {tx.subtotal_excl_vat_zar.toFixed(2)}</td>
-                      <td style={{ padding: '12px 16px', textAlign: 'right', fontSize: '13px', color: '#6b7280' }}>R {tx.vat_amount_zar.toFixed(2)}</td>
-                      <td style={{ padding: '12px 16px', textAlign: 'right', fontSize: '13px', fontWeight: '600' }}>R {tx.total_incl_vat_zar.toFixed(2)}</td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <span style={{ display: 'inline-block', padding: '2px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '500', background: statusStyle.bg, color: statusStyle.color }}>
-                          {tx.status}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <button onClick={() => setSelectedTx(tx)} style={{ background: 'none', border: 'none', color: '#1a7a4a', fontSize: '12px', fontWeight: '500', cursor: 'pointer' }}>View</button>
-                        {tx.status === 'completed' && (
-                          <button style={{ background: 'none', border: 'none', color: '#d97706', fontSize: '12px', fontWeight: '500', cursor: 'pointer', marginLeft: '8px' }}>Refund</button>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                })}
-                {filteredTx.length === 0 && (
-                  <tr>
-                    <td colSpan={9} style={{ padding: '40px 16px', textAlign: 'center', color: '#6b7280', fontSize: '14px' }}>
-                      No transactions found
+                {transactions.map((t, i) => (
+                  <tr key={t.id} style={{ borderBottom: i < transactions.length - 1 ? '1px solid #1a2535' : 'none' }}>
+                    <td style={{ padding: '13px 16px', fontSize: '12px', fontWeight: 600, color: '#22c55e' }}>{t.id}</td>
+                    <td style={{ padding: '13px 16px', fontSize: '12px', color: '#4a6080' }}>{t.date} {t.time}</td>
+                    <td style={{ padding: '13px 16px', fontSize: '13px', fontWeight: 500, color: '#e2e8f0' }}>{t.member}</td>
+                    <td style={{ padding: '13px 16px', fontSize: '12px', color: '#4a6080' }}>{t.items}</td>
+                    <td style={{ padding: '13px 16px', fontSize: '12px', color: '#4a6080' }}>R {t.subtotal.toLocaleString()}</td>
+                    <td style={{ padding: '13px 16px', fontSize: '12px', color: '#4a6080' }}>R {t.vat.toLocaleString()}</td>
+                    <td style={{ padding: '13px 16px', fontSize: '13px', fontWeight: 700, color: '#e2e8f0' }}>R {t.total.toLocaleString()}</td>
+                    <td style={{ padding: '13px 16px' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '3px', background: t.payment === 'Cash' ? '#1a150a' : '#0d1520', color: t.payment === 'Cash' ? '#f59e0b' : '#60a5fa', border: `1px solid ${t.payment === 'Cash' ? '#3d2a0a' : '#1a2535'}` }}>{t.payment}</span>
+                    </td>
+                    <td style={{ padding: '13px 16px' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '3px', background: '#0d1f12', color: '#22c55e', border: '1px solid #1a3322' }}>{t.status}</span>
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
 
-      {/* Receipt Modal */}
-      {selectedTx && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '0', width: '380px', maxHeight: '80vh', overflow: 'auto' }}>
-            {/* Receipt Header */}
-            <div style={{ padding: '20px', borderBottom: '2px dashed #e5e7eb', textAlign: 'center' }}>
-              <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '240px', height: 'auto', display: 'block' }} />
-              <div style={{ fontSize: '11px', color: '#6b7280' }}>Cannabis Club Management</div>
-              <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>South Africa</div>
-            </div>
-
-            {/* Receipt Info */}
-            <div style={{ padding: '16px 20px', borderBottom: '2px dashed #e5e7eb' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>Invoice:</span>
-                <span style={{ fontSize: '12px', fontWeight: '500' }}>{selectedTx.invoice_number}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>Date:</span>
-                <span style={{ fontSize: '12px' }}>{selectedTx.created_at}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>Member:</span>
-                <span style={{ fontSize: '12px' }}>{selectedTx.member_name}</span>
-              </div>
-            </div>
-
-            {/* Line Items */}
-            <div style={{ padding: '16px 20px', borderBottom: '2px dashed #e5e7eb' }}>
-              <div style={{ fontSize: '11px', fontWeight: '600', color: '#6b7280', marginBottom: '8px' }}>ITEMS</div>
-              {mockLineItems[selectedTx.id]?.map((item, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <div>
-                    <div style={{ fontSize: '12px' }}>{item.name}</div>
-                    <div style={{ fontSize: '11px', color: '#9ca3af' }}>Qty: {item.qty}</div>
-                  </div>
-                  <span style={{ fontSize: '12px', fontWeight: '500' }}>R {item.price.toFixed(2)}</span>
+          {/* VAT Summary Note */}
+          <div style={{ marginTop: '20px', background: '#0a0f14', border: '1px solid #1a2535', borderRadius: '10px', padding: '20px 24px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#e2e8f0', marginBottom: '10px' }}>SARS VAT Summary</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+              {[
+                { label: 'Total Exempt Sales (0%)', value: 'R 0.00' },
+                { label: 'Standard Rate Sales (15%)', value: `R ${todayTotal.toLocaleString()}` },
+                { label: 'Output VAT Due', value: `R ${todayVat.toLocaleString()}` },
+              ].map(item => (
+                <div key={item.label}>
+                  <div style={{ fontSize: '11px', color: '#3d4f63', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{item.label}</div>
+                  <div style={{ fontSize: '18px', fontWeight: 700, color: '#e2e8f0' }}>{item.value}</div>
                 </div>
-              )) || <div style={{ fontSize: '12px', color: '#6b7280' }}>No items</div>}
-            </div>
-
-            {/* Totals */}
-            <div style={{ padding: '16px 20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>Subtotal (excl VAT):</span>
-                <span style={{ fontSize: '12px' }}>R {selectedTx.subtotal_excl_vat_zar.toFixed(2)}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>VAT (15%):</span>
-                <span style={{ fontSize: '12px' }}>R {selectedTx.vat_amount_zar.toFixed(2)}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #e5e7eb' }}>
-                <span style={{ fontSize: '13px', fontWeight: '600' }}>TOTAL:</span>
-                <span style={{ fontSize: '13px', fontWeight: '600' }}>R {selectedTx.total_incl_vat_zar.toFixed(2)}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-                <span style={{ fontSize: '11px', color: '#6b7280' }}>Payment:</span>
-                <span style={{ fontSize: '11px' }}>{getMethodIcon(selectedTx.payment_method)} {selectedTx.payment_method.toUpperCase()}</span>
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div style={{ padding: '16px 20px', borderTop: '2px dashed #e5e7eb', textAlign: 'center' }}>
-              <div style={{ fontSize: '10px', color: '#9ca3af', marginBottom: '4px' }}>SARS VAT Compliant</div>
-              <div style={{ fontSize: '10px', color: '#9ca3af' }}>Thank you for your business</div>
-            </div>
-
-            {/* Close Button */}
-            <div style={{ padding: '16px 20px', borderTop: '1px solid #e5e7eb' }}>
-              <button onClick={() => setSelectedTx(null)} style={{ width: '100%', padding: '10px', background: '#1a7a4a', color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Close</button>
+              ))}
             </div>
           </div>
-        </div>
-      )}
+        </main>
+      </div>
     </div>
   )
 }

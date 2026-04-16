@@ -4,12 +4,12 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 const mockProducts = [
-  { id: '1', name: 'Purple Haze', category: 'sativa', price: 850, thc: '22%', stock: 28 },
-  { id: '2', name: 'Northern Lights', category: 'indica', price: 720, thc: '18%', stock: 14 },
-  { id: '3', name: 'THC Gummies', category: 'edible', price: 350, thc: '10mg', stock: 42 },
-  { id: '4', name: 'Water Hash', category: 'concentrate', price: 1200, thc: '65%', stock: 8 },
-  { id: '5', name: 'OG Kush', category: 'hybrid', price: 780, thc: '20%', stock: 21 },
-  { id: '6', name: 'CBD Oil 1000mg', category: 'wellness', price: 650, thc: '0%', stock: 35 },
+  { id: '1', name: 'Purple Haze', category: 'Sativa', strain: 'Sativa', price: 850, thc: '22%', stock: 28, unit: '3.5g' },
+  { id: '2', name: 'Northern Lights', category: 'Indica', strain: 'Indica', price: 720, thc: '18%', stock: 14, unit: '3.5g' },
+  { id: '3', name: 'THC Gummies', category: 'Edible', strain: 'Edible', price: 350, thc: '10mg', stock: 42, unit: 'pack' },
+  { id: '4', name: 'Water Hash', category: 'Concentrate', strain: 'Concentrate', price: 1200, thc: '65%', stock: 8, unit: '1g' },
+  { id: '5', name: 'OG Kush', category: 'Hybrid', strain: 'Hybrid', price: 780, thc: '20%', stock: 21, unit: '3.5g' },
+  { id: '6', name: 'CBD Oil 1000mg', category: 'Wellness', strain: 'Wellness', price: 650, thc: '0%', stock: 35, unit: '30ml' },
 ]
 
 const categories = ['All', 'Sativa', 'Indica', 'Hybrid', 'Edible', 'Concentrate', 'Wellness']
@@ -52,171 +52,271 @@ export default function POSPage() {
   const vat = subtotal * 0.15
   const total = subtotal + vat
 
+  const stockStatus = (stock: number) => {
+    if (stock <= 5) return { label: 'Critical', color: '#ef4444', bg: '#fef2f2' }
+    if (stock <= 15) return { label: 'Low', color: '#f59e0b', bg: '#fffbeb' }
+    return { label: 'In Stock', color: '#10b981', bg: '#f0fdf4' }
+  }
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
-      <aside style={{ width: '240px', background: '#1a1a2e', borderRight: '0.5px solid #2a2a3e', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-        {/* Brand Header */}
-        <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #2a2a3e' }}>
-          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '160px', height: 'auto', display: 'block' }} />
-          <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px', letterSpacing: '0.3px' }}>Cannabis Club Management</div>
-          <div style={{ display: 'inline-block', marginTop: '6px', background: '#16213e', color: '#4ade80', fontSize: '9px', fontWeight: '700', padding: '3px 8px', borderRadius: '4px', letterSpacing: '0.5px', border: '1px solid #1a3a2a' }}>ZA COMPLIANT</div>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#0f1923' }}>
+      {/* Sidebar */}
+      <aside style={{ width: '260px', background: '#0a0f14', display: 'flex', flexDirection: 'column', flexShrink: 0, borderRight: '1px solid #1a2535' }}>
+        {/* Logo Area */}
+        <div style={{ padding: '28px 20px 24px', borderBottom: '1px solid #1a2535' }}>
+          <img
+            src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png"
+            alt="CannaBuy"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+          />
+          <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid #1a2535' }}>
+            <div style={{ fontSize: '10px', color: '#3d4f63', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>Cannabis Club Management</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '10px', background: '#0d1f12', color: '#22c55e', fontSize: '9px', fontWeight: 700, padding: '5px 10px', borderRadius: '3px', letterSpacing: '0.8px', border: '1px solid #1a3322' }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }}></span>
+              ZA COMPLIANT
+            </div>
+          </div>
         </div>
+
         {/* Navigation */}
-        <nav style={{ padding: '10px 8px', flex: 1 }}>
+        <nav style={{ padding: '20px 12px', flex: 1 }}>
+          <div style={{ fontSize: '9px', color: '#2a3a50', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, padding: '0 12px', marginBottom: '10px' }}>Navigation</div>
           {[
-            { label: 'Dashboard', href: '/dashboard', icon: '▦' },
-            { label: 'Members', href: '/members', icon: '👥' },
-            { label: 'Inventory', href: '/inventory', icon: '📦' },
-            { label: 'Point of Sale', href: '/pos', icon: '🧾', active: true },
-            { label: 'Products', href: '/admin/products', icon: '📋' },
-            { label: 'Transactions', href: '/transactions', icon: '📊' },
-          ].map((item: any) => (
-            <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '6px', marginBottom: '2px', fontSize: '13px', background: item.active ? '#4ade80' : 'transparent', color: item.active ? '#1a1a2e' : '#9ca3af', fontWeight: item.active ? '600' : '400' }}>
-                <span style={{ fontSize: '14px', width: '18px', textAlign: 'center' }}>{item.icon}</span>
+            { label: 'Dashboard', href: '/dashboard', icon: '◫', active: false },
+            { label: 'Members', href: '/members', icon: '◉', active: false },
+            { label: 'Inventory', href: '/inventory', icon: '◈', active: false },
+            { label: 'Point of Sale', href: '/pos', icon: '◇', active: true },
+            { label: 'Products', href: '/admin/products', icon: '◆', active: false },
+            { label: 'Transactions', href: '/transactions', icon: '▣', active: false },
+          ].map((item) => (
+            <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block', marginBottom: '3px' }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '11px',
+                padding: '10px 12px', borderRadius: '6px', fontSize: '13px',
+                background: item.active ? '#0f2a1a' : 'transparent',
+                color: item.active ? '#22c55e' : '#4a6080',
+                fontWeight: item.active ? 600 : 400,
+                borderLeft: item.active ? '2px solid #22c55e' : '2px solid transparent',
+                transition: 'all 0.15s ease',
+              }}>
+                <span style={{ fontSize: '13px', width: '18px', textAlign: 'center', opacity: item.active ? 1 : 0.5 }}>{item.icon}</span>
                 {item.label}
               </div>
             </Link>
           ))}
         </nav>
+
         {/* Footer */}
-        <div style={{ padding: '12px 16px', borderTop: '1px solid #2a2a3e', fontSize: '11px', color: '#6b7280' }}>v1.0 · South Africa</div>
+        <div style={{ padding: '20px 20px', borderTop: '1px solid #1a2535' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: '#2a3a50' }}>CannaBuy POS</div>
+          <div style={{ fontSize: '10px', color: '#1e2d3d', marginTop: '3px' }}>v1.0 · South Africa</div>
+        </div>
       </aside>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <header style={{ background: 'white', borderBottom: '0.5px solid #e5e7eb', padding: '0 24px', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: '15px', fontWeight: '600' }}>Point of Sale</div>
+      {/* Main Content */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        {/* Top Bar */}
+        <header style={{ background: '#0a0f14', borderBottom: '1px solid #1a2535', padding: '0 28px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#e2e8f0' }}>Point of Sale</div>
+            <div style={{ fontSize: '11px', color: '#22c55e', background: '#0f2a1a', padding: '4px 10px', borderRadius: '3px', fontWeight: 500 }}>● Live</div>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#e8f5ef', color: '#1a7a4a', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: '600' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#1a7a4a', display: 'inline-block' }} />
-              System Active
-            </div>
+            <div style={{ fontSize: '12px', color: '#4a6080', background: '#0f1923', padding: '6px 14px', borderRadius: '6px', border: '1px solid #1a2535' }}>Staff: Admin</div>
+            <div style={{ fontSize: '12px', color: '#4a6080' }}>ZA</div>
           </div>
         </header>
 
-        <div style={{ padding: '24px', flex: 1, display: 'grid', gridTemplateColumns: '1fr 380px', gap: '20px' }}>
-          {/* Product Catalog */}
-          <div style={{ background: 'white', border: '0.5px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '0.5px solid #e5e7eb' }}>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ width: '250px', padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
-              />
+        {/* POS Content */}
+        <main style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+          {/* Left: Product Catalog */}
+          <div style={{ flex: 1, padding: '24px', overflow: 'auto' }}>
+            {/* Search & Filter */}
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{ width: '100%', padding: '10px 14px 10px 38px', fontSize: '13px', background: '#0f1923', border: '1px solid #1a2535', borderRadius: '8px', color: '#e2e8f0', outline: 'none', boxSizing: 'border-box' }}
+                />
+                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#3d4f63', fontSize: '13px' }}>⌕</span>
+              </div>
             </div>
-            <div style={{ padding: '12px 20px', borderBottom: '0.5px solid #e5e7eb', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {categories.map((cat) => (
+
+            {/* Category Tabs */}
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '20px', flexWrap: 'wrap' }}>
+              {categories.map(cat => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   style={{
-                    padding: '6px 14px',
-                    borderRadius: '20px',
-                    border: '1px solid #e5e7eb',
-                    background: selectedCategory === cat ? '#1a7a4a' : 'white',
-                    color: selectedCategory === cat ? 'white' : '#6b7280',
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    cursor: 'pointer'
+                    padding: '6px 14px', fontSize: '12px', fontWeight: 500,
+                    background: selectedCategory === cat ? '#22c55e' : '#0f1923',
+                    color: selectedCategory === cat ? '#0a0f14' : '#4a6080',
+                    border: `1px solid ${selectedCategory === cat ? '#22c55e' : '#1a2535'}`,
+                    borderRadius: '6px', cursor: 'pointer', transition: 'all 0.15s ease',
                   }}
                 >
                   {cat}
                 </button>
               ))}
             </div>
-            <div style={{ padding: '16px 20px', overflowY: 'auto', maxHeight: 'calc(100vh - 320px)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
-                {filteredProducts.map((product) => (
-                  <button
+
+            {/* Product Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '14px' }}>
+              {filteredProducts.map(product => {
+                const status = stockStatus(product.stock)
+                return (
+                  <div
                     key={product.id}
                     onClick={() => addToCart(product)}
                     style={{
-                      background: '#f9fafb',
-                      borderRadius: '10px',
-                      padding: '12px',
-                      cursor: 'pointer',
-                      border: '1px solid transparent',
-                      textAlign: 'left'
+                      background: '#0f1923', border: '1px solid #1a2535',
+                      borderRadius: '10px', padding: '16px', cursor: 'pointer',
+                      transition: 'all 0.15s ease', position: 'relative',
                     }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = '#22c55e')}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = '#1a2535')}
                   >
-                    <div style={{ width: '100%', height: '60px', background: '#e5e7eb', borderRadius: '8px', marginBottom: '8px' }} />
-                    <div style={{ fontSize: '13px', fontWeight: '500', marginBottom: '4px' }}>{product.name}</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '4px' }}>{product.category} · {product.thc}</div>
-                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#1a7a4a' }}>R {product.price.toFixed(2)}</div>
-                    <div style={{ fontSize: '10px', color: product.stock < 10 ? '#dc2626' : '#6b7280' }}>Stock: {product.stock}</div>
-                  </button>
-                ))}
-              </div>
+                    {/* Category badge */}
+                    <div style={{
+                      position: 'absolute', top: '12px', right: '12px',
+                      fontSize: '9px', fontWeight: 700, color: '#4a6080',
+                      background: '#0a0f14', padding: '2px 6px', borderRadius: '3px',
+                      letterSpacing: '0.5px', textTransform: 'uppercase'
+                    }}>
+                      {product.category}
+                    </div>
+
+                    {/* THC/Strain */}
+                    <div style={{ fontSize: '10px', color: '#22c55e', fontWeight: 600, marginBottom: '6px', letterSpacing: '0.3px' }}>
+                      {product.strain} · {product.thc} THC
+                    </div>
+
+                    {/* Name */}
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#e2e8f0', marginBottom: '4px' }}>{product.name}</div>
+
+                    {/* Unit */}
+                    <div style={{ fontSize: '11px', color: '#3d4f63', marginBottom: '12px' }}>{product.unit}</div>
+
+                    {/* Price & Stock Row */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontSize: '16px', fontWeight: 700, color: '#e2e8f0' }}>R {product.price.toLocaleString()}</div>
+                      <div style={{ fontSize: '10px', fontWeight: 600, color: status.color, background: status.bg, padding: '3px 8px', borderRadius: '4px' }}>
+                        {product.stock} {status.label}
+                      </div>
+                    </div>
+
+                    {/* Add indicator */}
+                    <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #1a2535', textAlign: 'center' }}>
+                      <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: 600 }}>+ Add to Sale</span>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
 
-          {/* Cart */}
-          <div style={{ background: 'white', border: '0.5px solid #e5e7eb', borderRadius: '12px', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '0.5px solid #e5e7eb' }}>
-              <div style={{ fontSize: '14px', fontWeight: '600' }}>Current Sale</div>
+          {/* Right: Cart Panel */}
+          <div style={{ width: '320px', background: '#0a0f14', borderLeft: '1px solid #1a2535', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+            {/* Cart Header */}
+            <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1a2535' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#e2e8f0' }}>Current Sale</div>
+                <div style={{ fontSize: '12px', color: '#4a6080', background: '#0f1923', padding: '4px 10px', borderRadius: '4px' }}>
+                  {cart.length} item{cart.length !== 1 ? 's' : ''}
+                </div>
+              </div>
             </div>
-            <div style={{ padding: '16px 20px', flex: 1, overflowY: 'auto' }}>
+
+            {/* Cart Items */}
+            <div style={{ flex: 1, overflow: 'auto', padding: '12px' }}>
               {cart.length === 0 ? (
-                <div style={{ textAlign: 'center', color: '#9ca3af', padding: '40px 0' }}>
-                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>🛒</div>
-                  <div style={{ fontSize: '13px' }}>No items in cart</div>
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: '#2a3a50' }}>
+                  <div style={{ fontSize: '32px', marginBottom: '10px' }}>🛒</div>
+                  <div style={{ fontSize: '13px', fontWeight: 500 }}>No items in cart</div>
+                  <div style={{ fontSize: '12px', marginTop: '4px', color: '#1e2d3d' }}>Click a product to add</div>
                 </div>
               ) : (
-                cart.map((item) => (
-                  <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '0.5px solid #f3f4f6' }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '13px', fontWeight: '500' }}>{item.name}</div>
-                      <div style={{ fontSize: '12px', color: '#6b7280' }}>R {item.price.toFixed(2)} each</div>
+                cart.map(item => (
+                  <div key={item.id} style={{ background: '#0f1923', border: '1px solid #1a2535', borderRadius: '8px', padding: '12px', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>{item.name}</div>
+                        <div style={{ fontSize: '11px', color: '#4a6080', marginTop: '2px' }}>R {item.price.toLocaleString()} each</div>
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(item.id)}
+                        style={{ background: 'none', border: 'none', color: '#3d4f63', cursor: 'pointer', fontSize: '14px', padding: '0 4px' }}
+                      >
+                        ×
+                      </button>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <button onClick={() => updateQty(item.id, -1)} style={{ width: '24px', height: '24px', borderRadius: '4px', border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', fontSize: '14px' }}>-</button>
-                      <span style={{ fontSize: '13px', fontWeight: '500', minWidth: '20px', textAlign: 'center' }}>{item.qty}</span>
-                      <button onClick={() => updateQty(item.id, 1)} style={{ width: '24px', height: '24px', borderRadius: '4px', border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', fontSize: '14px' }}>+</button>
-                      <button onClick={() => removeFromCart(item.id)} style={{ marginLeft: '8px', background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '12px' }}>✕</button>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <button
+                          onClick={() => updateQty(item.id, -1)}
+                          style={{ width: '24px', height: '24px', borderRadius: '4px', background: '#1a2535', border: 'none', color: '#e2e8f0', cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          −
+                        </button>
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#e2e8f0', width: '20px', textAlign: 'center' }}>{item.qty}</span>
+                        <button
+                          onClick={() => updateQty(item.id, 1)}
+                          style={{ width: '24px', height: '24px', borderRadius: '4px', background: '#1a2535', border: 'none', color: '#e2e8f0', cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#22c55e' }}>
+                        R {(item.price * item.qty).toLocaleString()}
+                      </div>
                     </div>
                   </div>
                 ))
               )}
             </div>
-            <div style={{ padding: '16px 20px', borderTop: '0.5px solid #e5e7eb' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>Subtotal (excl VAT)</span>
-                <span style={{ fontSize: '12px' }}>R {subtotal.toFixed(2)}</span>
+
+            {/* Cart Totals */}
+            {cart.length > 0 && (
+              <div style={{ padding: '16px 20px', borderTop: '1px solid #1a2535' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', color: '#4a6080' }}>Subtotal (excl. VAT)</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>R {subtotal.toLocaleString()}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', color: '#4a6080' }}>VAT (15%)</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>R {vat.toLocaleString()}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid #1a2535', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#e2e8f0' }}>Total</span>
+                  <span style={{ fontSize: '18px', fontWeight: 700, color: '#22c55e' }}>R {total.toLocaleString()}</span>
+                </div>
+
+                {/* Payment Buttons */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                  <button style={{ padding: '12px', background: '#0f1923', border: '1px solid #1a2535', borderRadius: '8px', color: '#e2e8f0', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                    💵 Cash
+                  </button>
+                  <button style={{ padding: '12px', background: '#0f1923', border: '1px solid #1a2535', borderRadius: '8px', color: '#e2e8f0', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                    💳 Card
+                  </button>
+                </div>
+                <button
+                  style={{
+                    width: '100%', padding: '14px', background: '#22c55e', border: 'none',
+                    borderRadius: '8px', color: '#0a0f14', fontSize: '14px', fontWeight: 700,
+                    cursor: 'pointer', marginTop: '4px', letterSpacing: '0.3px'
+                  }}
+                >
+                  Complete Sale · R {total.toLocaleString()}
+                </button>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>VAT (15%)</span>
-                <span style={{ fontSize: '12px' }}>R {vat.toFixed(2)}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #e5e7eb', marginTop: '8px' }}>
-                <span style={{ fontSize: '14px', fontWeight: '600' }}>Total</span>
-                <span style={{ fontSize: '14px', fontWeight: '600' }}>R {total.toFixed(2)}</span>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '16px' }}>
-                <button style={{ padding: '10px', borderRadius: '8px', border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', fontSize: '12px', fontWeight: '500' }}>💵 Cash</button>
-                <button style={{ padding: '10px', borderRadius: '8px', border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', fontSize: '12px', fontWeight: '500' }}>💳 Card</button>
-              </div>
-              <button
-                disabled={cart.length === 0}
-                style={{
-                  width: '100%',
-                  marginTop: '8px',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: cart.length === 0 ? '#d1d5db' : '#059669',
-                  color: 'white',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  cursor: cart.length === 0 ? 'not-allowed' : 'pointer'
-                }}
-              >
-                Complete Sale
-              </button>
-            </div>
+            )}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   )
