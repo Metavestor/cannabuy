@@ -96,32 +96,50 @@ async function main() {
     console.log(`Created auth user: ${email}`)
   }
 
-  const tenantQuery = supabase.from('tenants').select('id, slug').order('created_at', { ascending: true }).limit(1)
-  const { data: tenantRows, error: tenantError } = tenantSlug
-    ? await supabase.from('tenants').select('id, slug').eq('slug', tenantSlug).limit(1)
-    : await tenantQuery
+  const defaultTenantSlug = tenantSlug || 'cannaclub-gauteng'
+  const defaultTenantName = process.env.ADMIN_TENANT_NAME || 'CannaClub Gauteng'
+  const defaultVatNumber = process.env.ADMIN_TENANT_VAT_NUMBER || '0000000000'
+  const defaultFicaOfficer = process.env.ADMIN_TENANT_FICA_OFFICER || fullName
+  const defaultBrandColor = process.env.ADMIN_TENANT_BRAND_COLOR || '#1a7a4a'
+  const defaultPlan = process.env.ADMIN_TENANT_PLAN || 'enterprise'
+
+  const { data: tenantRows, error: tenantError } = await supabase
+    .from('tenants')
+    .select('id, slug, name')
+    .eq('slug', defaultTenantSlug)
+    .limit(1)
 
   if (tenantError) throw tenantError
-  if (!tenantRows || tenantRows.length === 0) {
-    throw new Error(
-      tenantSlug
-        ? `No tenant found for slug: ${tenantSlug}`
-        : 'No tenants found. Create a tenant first, then rerun this script.'
-    )
-  }
 
-  const tenant = tenantRows[0]
+  let tenant = tenantRows?.[0]
+
+  if (!tenant) {
+    const { data: createdTenant, error: createTenantError } = await supabase
+      .from('tenants')
+      .insert({
+        slug: defaultTenantSlug,
+        name: defaultTenantName,
+        vat_number: defaultVatNumber,
+        fica_officer: defaultFicaOfficer,
+        brand_color: defaultBrandColor,
+        plan: defaultPlan,
+        is_active: true,
+      })
+      .select('id, slug, name')
+      .single()
+
+    if (createTenantError) throw createTenantError
+    tenant = createdTenant
+    console.log(`Created default tenant: ${tenant.slug}`)
+  }
 
   const { error: profileError } = await supabase.from('user_profiles').upsert(
     {
       id: userId,
       tenant_id: tenant.id,
-      email,
-      full_name: fullName,
       role,
-      is_active: true,
     },
-    { onConflict: 'tenant_id,email' }
+    { onConflict: 'id' }
   )
 
   if (profileError) throw profileError
