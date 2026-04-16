@@ -7,7 +7,7 @@ import {
   ReactNode,
   useCallback,
 } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { hasSupabaseConfig, supabase } from '@/lib/supabase/client'
 import type { User, Session } from '@supabase/supabase-js'
 import type { UserProfile, AuthUser } from '@/lib/supabase/types'
 
@@ -29,6 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = useCallback(
     async (userId: string): Promise<UserProfile | null> => {
+      if (!hasSupabaseConfig()) return null
+
       const { data, error } = await supabase()
         .from('user_profiles')
         .select('*')
@@ -51,6 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Listen to auth state changes and load profile
   useEffect(() => {
+    if (!hasSupabaseConfig()) {
+      setIsLoading(false)
+      return
+    }
+
     const {
       data: { subscription },
     } = supabase().auth.onAuthStateChange(async (_event, session) => {
@@ -96,6 +103,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchProfile])
 
   const signIn = async (email: string, password: string) => {
+    if (!hasSupabaseConfig()) {
+      return { error: new Error('Supabase environment variables are missing') }
+    }
+
     const { error } = await supabase().auth.signInWithPassword({
       email,
       password,
@@ -104,6 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
+    if (!hasSupabaseConfig()) {
+      setUser(null)
+      setSession(null)
+      return { error: null }
+    }
+
     const { error } = await supabase().auth.signOut()
     setUser(null)
     setSession(null)

@@ -1,6 +1,10 @@
 'use client'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import ClubLayout from '../../components/layout/ClubLayout'
+import { useClub } from '../../components/context/ClubContext'
+import { getProducts, adjustStock } from '../../lib/supabase/queries'
+import type { Product as DbProduct } from '../../lib/supabase/types'
+import { supabase } from '../../lib/supabase/client'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -25,22 +29,26 @@ interface Adjustment {
   notes: string
 }
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+// ─── DB → UI mapper ───────────────────────────────────────────────────────────
 
-let nextId = 100
-
-const initialInventory: Product[] = [
-  { id: '1', sku: 'SKU-001', name: 'Purple Haze', category: 'Sativa', stock: 28, reorderLevel: 10, price: 850, unit: '3.5g' },
-  { id: '2', sku: 'SKU-002', name: 'Northern Lights', category: 'Indica', stock: 14, reorderLevel: 10, price: 720, unit: '3.5g' },
-  { id: '3', sku: 'SKU-003', name: 'OG Kush', category: 'Hybrid', stock: 21, reorderLevel: 10, price: 780, unit: '3.5g' },
-  { id: '4', sku: 'SKU-004', name: 'THC Gummies', category: 'Edible', stock: 42, reorderLevel: 15, price: 350, unit: 'pack' },
-  { id: '5', sku: 'SKU-005', name: 'Water Hash', category: 'Concentrate', stock: 4, reorderLevel: 5, price: 1200, unit: '1g' },
-  { id: '6', sku: 'SKU-006', name: 'CBD Oil 1000mg', category: 'Wellness', stock: 35, reorderLevel: 10, price: 650, unit: '30ml' },
-  { id: '7', sku: 'SKU-007', name: 'Sour Diesel', category: 'Sativa', stock: 8, reorderLevel: 10, price: 800, unit: '3.5g' },
-  { id: '8', sku: 'SKU-008', name: 'Blue Dream', category: 'Hybrid', stock: 0, reorderLevel: 10, price: 750, unit: '3.5g' },
-]
+function mapDbProduct(p: DbProduct): Product {
+  return {
+    id: p.id,
+    sku: p.sku,
+    name: p.name,
+    category: (p.category.charAt(0).toUpperCase() + p.category.slice(1)) as Product['category'],
+    stock: p.stock_qty,
+    reorderLevel: p.reorder_threshold,
+    price: p.price_incl_vat_zar,
+    unit: p.unit_label,
+  }
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function categoryLabel(cat: string): string {
+  return cat.charAt(0).toUpperCase() + cat.slice(1)
+}
 
 function getStatus(stock: number, reorderLevel: number): StockStatus {
   if (stock === 0) return 'Out of Stock'
@@ -63,6 +71,19 @@ function categoryColor(cat: string) {
   }
   return map[cat] ?? '#6b7280'
 }
+
+// ─── Demo fallback data ────────────────────────────────────────────────────────
+
+const DEMO_PRODUCTS: Product[] = [
+  { id: '1', sku: 'SKU-001', name: 'Purple Haze', category: 'Sativa', stock: 28, reorderLevel: 10, price: 850, unit: '3.5g' },
+  { id: '2', sku: 'SKU-002', name: 'Northern Lights', category: 'Indica', stock: 14, reorderLevel: 10, price: 720, unit: '3.5g' },
+  { id: '3', sku: 'SKU-003', name: 'OG Kush', category: 'Hybrid', stock: 21, reorderLevel: 10, price: 780, unit: '3.5g' },
+  { id: '4', sku: 'SKU-004', name: 'THC Gummies', category: 'Edible', stock: 42, reorderLevel: 15, price: 350, unit: 'pack' },
+  { id: '5', sku: 'SKU-005', name: 'Water Hash', category: 'Concentrate', stock: 4, reorderLevel: 5, price: 1200, unit: '1g' },
+  { id: '6', sku: 'SKU-006', name: 'CBD Oil 1000mg', category: 'Wellness', stock: 35, reorderLevel: 10, price: 650, unit: '30ml' },
+  { id: '7', sku: 'SKU-007', name: 'Sour Diesel', category: 'Sativa', stock: 8, reorderLevel: 10, price: 800, unit: '3.5g' },
+  { id: '8', sku: 'SKU-008', name: 'Blue Dream', category: 'Hybrid', stock: 0, reorderLevel: 10, price: 750, unit: '3.5g' },
+]
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -108,7 +129,9 @@ function StatCard({ label, value, sub, accent }: { label: string; value: string;
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function InventoryPage() {
-  const [inventory, setInventory] = useState<Product[]>(initialInventory)
+  const { activeClub, isDemo } = useClub()
+  const [products, setProducts] = useState<Product[]>([])
+  const [isLoading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [adjustmentItem, setAdjustmentItem] = useState<Product | null>(null)
@@ -118,25 +141,51 @@ export default function InventoryPage() {
     name: '', sku: '', category: 'Sativa', stock: 0, reorderLevel: 10, price: 0, unit: '3.5g',
   })
 
-  // ── Filtered inventory ───────────────────────────────────────────────────────
+  // ── Load products from Supabase ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!activeClub?.id) return
+
+    // Use demo data if in demo mode
+    if (isDemo) {
+      setProducts(DEMO_PRODUCTS)
+      return
+    }
+
+    setLoading(true)
+    getProducts(activeClub.id)
+      .then((dbProducts) => {
+        if (dbProducts.length === 0) {
+          setProducts(DEMO_PRODUCTS)
+        } else {
+          setProducts(dbProducts.map(mapDbProduct))
+        }
+      })
+      .catch((err) => {
+        console.error('[inventory] getProducts error:', err)
+        setProducts(DEMO_PRODUCTS)
+      })
+      .finally(() => setLoading(false))
+  }, [activeClub?.id, isDemo])
+
+  // ── Filtered products ───────────────────────────────────────────────────────
   const filtered = useMemo(() => {
-    if (!search.trim()) return inventory
+    if (!search.trim()) return products
     const q = search.toLowerCase()
-    return inventory.filter(p =>
+    return products.filter(p =>
       p.name.toLowerCase().includes(q) ||
       p.sku.toLowerCase().includes(q) ||
       p.category.toLowerCase().includes(q)
     )
-  }, [inventory, search])
+  }, [products, search])
 
   // ── Dynamic stats ───────────────────────────────────────────────────────────
   const stats = useMemo(() => {
-    const totalProducts = inventory.length
-    const totalValue = inventory.reduce((s, p) => s + p.stock * p.price, 0)
-    const lowStock = inventory.filter(p => getStatus(p.stock, p.reorderLevel) === 'Low Stock' || getStatus(p.stock, p.reorderLevel) === 'Critical').length
-    const outOfStock = inventory.filter(p => p.stock === 0).length
+    const totalProducts = products.length
+    const totalValue = products.reduce((s, p) => s + p.stock * p.price, 0)
+    const lowStock = products.filter(p => getStatus(p.stock, p.reorderLevel) === 'Low Stock' || getStatus(p.stock, p.reorderLevel) === 'Critical').length
+    const outOfStock = products.filter(p => p.stock === 0).length
     return { totalProducts, totalValue, lowStock, outOfStock }
-  }, [inventory])
+  }, [products])
 
   // ── Row selection ───────────────────────────────────────────────────────────
   const toggleRow = useCallback((id: string) => {
@@ -156,29 +205,53 @@ export default function InventoryPage() {
   }, [filtered])
 
   // ── Stock adjustment ────────────────────────────────────────────────────────
-  const applyAdjustment = () => {
+  const applyAdjustment = async () => {
     if (!adjustmentItem || adjustment.qty <= 0) return
-    setInventory(prev => prev.map(p => {
-      if (p.id !== adjustmentItem.id) return p
-      let newStock = p.stock
-      switch (adjustment.type) {
-        case 'receive': newStock += adjustment.qty; break
-        case 'return': newStock += adjustment.qty; break
-        case 'sale': newStock = Math.max(0, newStock - adjustment.qty); break
-        case 'damage': newStock = Math.max(0, newStock - adjustment.qty); break
-        case 'writeoff': newStock = Math.max(0, newStock - adjustment.qty); break
-      }
-      return { ...p, stock: newStock }
-    }))
+
+    // Compute new stock value locally for responsive UX
+    let newStock = adjustmentItem.stock
+    switch (adjustment.type) {
+      case 'receive': newStock += adjustment.qty; break
+      case 'return': newStock += adjustment.qty; break
+      case 'sale': newStock = Math.max(0, newStock - adjustment.qty); break
+      case 'damage': newStock = Math.max(0, newStock - adjustment.qty); break
+      case 'writeoff': newStock = Math.max(0, newStock - adjustment.qty); break
+    }
+
+    // Update local state immediately
+    setProducts(prev => prev.map(p =>
+      p.id === adjustmentItem.id ? { ...p, stock: newStock } : p
+    ))
+
+    const qtyChange = adjustment.type === 'receive' || adjustment.type === 'return'
+      ? adjustment.qty
+      : -adjustment.qty
+
+    // Map UI adjustment type to DB reason
+    const reasonMap: Record<AdjustmentType, string> = {
+      receive: 'restock',
+      return: 'return',
+      sale: 'sale',
+      damage: 'damage',
+      writeoff: 'manual',
+    }
+
+    // Persist to Supabase (fire-and-forget — local state already updated)
+    if (!isDemo && activeClub?.id) {
+      adjustStock(activeClub.id, adjustmentItem.id, qtyChange, reasonMap[adjustment.type] as any, 'system')
+        .catch(err => console.error('[inventory] adjustStock error:', err))
+    }
+
     setAdjustmentItem(null)
     setAdjustment({ type: 'receive', qty: 1, reason: '', notes: '' })
   }
 
   // ── Add product ─────────────────────────────────────────────────────────────
-  const addProduct = () => {
+  const addProduct = async () => {
     if (!addForm.name || !addForm.sku || !addForm.price) return
+
     const newProduct: Product = {
-      id: String(++nextId),
+      id: crypto.randomUUID(),
       sku: addForm.sku,
       name: addForm.name,
       category: (addForm.category as Product['category']) ?? 'Sativa',
@@ -187,14 +260,52 @@ export default function InventoryPage() {
       price: addForm.price ?? 0,
       unit: addForm.unit ?? '3.5g',
     }
-    setInventory(prev => [...prev, newProduct])
+
+    // Optimistically add to local state
+    setProducts(prev => [...prev, newProduct])
     setShowAdd(false)
     setAddForm({ name: '', sku: '', category: 'Sativa', stock: 0, reorderLevel: 10, price: 0, unit: '3.5g' })
+
+    // Persist to Supabase if not in demo mode
+    if (!isDemo && activeClub?.id) {
+      const { error } = await supabase().from('products').insert({
+        tenant_id: activeClub.id,
+        sku: newProduct.sku,
+        name: newProduct.name,
+        category: newProduct.category.toLowerCase() as any,
+        weight_grams: null,
+        unit_label: newProduct.unit,
+        price_incl_vat_zar: newProduct.price,
+        price_excl_vat_zar: newProduct.price / 1.15,
+        vat_amount_zar: newProduct.price - (newProduct.price / 1.15),
+        stock_qty: newProduct.stock,
+        reorder_threshold: newProduct.reorderLevel,
+        is_active: true,
+      })
+      if (error) console.error('[inventory] addProduct error:', error)
+    }
+  }
+
+  // ── Delete product ──────────────────────────────────────────────────────────
+  const deleteProduct = async (id: string) => {
+    // Optimistically remove locally
+    setProducts(prev => prev.filter(p => p.id !== id))
+    setSelected(prev => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
+
+    // Persist to Supabase if not in demo mode
+    if (!isDemo) {
+      const { error } = await supabase().from('products').update({ is_active: false }).eq('id', id)
+      if (error) console.error('[inventory] deleteProduct error:', error)
+    }
   }
 
   // ── CSV Export ──────────────────────────────────────────────────────────────
   const exportCSV = () => {
-    const headers = ['SKU', 'Name', 'Category', 'Stock', 'Unit', 'Reorder Level', 'Price (ZAR)', 'Status']
+    const headers = ['SKU', 'Name', 'Category', 'Stock', 'Unit', 'Reorder At', 'Price (ZAR)', 'Status']
     const rows = filtered.map(p => [
       p.sku, p.name, p.category, p.stock, p.unit, p.reorderLevel, p.price, getStatus(p.stock, p.reorderLevel),
     ])
@@ -207,6 +318,20 @@ export default function InventoryPage() {
   }
 
   const selectedCount = selected.size
+
+  // ── Loading state ───────────────────────────────────────────────────────────
+  if (isLoading && products.length === 0) {
+    return (
+      <ClubLayout title='Inventory Management'>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '320px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '28px', marginBottom: '12px', color: '#d1fae5' }}>◈</div>
+            <div style={{ fontSize: '13px', color: '#9ca3af' }}>Loading inventory...</div>
+          </div>
+        </div>
+      </ClubLayout>
+    )
+  }
 
   return (
     <ClubLayout title={`Inventory Management${selectedCount > 0 ? ` (${selectedCount} selected)` : ''}`}>
@@ -231,7 +356,7 @@ export default function InventoryPage() {
           </span>
           <div style={{ display: 'flex', gap: '8px', marginLeft: '8px' }}>
             <button onClick={() => {
-              const first = inventory.find(p => selected.has(p.id))
+              const first = products.find(p => selected.has(p.id))
               if (first) { setAdjustmentItem(first); setAdjustment({ type: 'receive', qty: 1, reason: '', notes: '' }) }
             }} style={{ background: '#16a34a', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 14px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
               Adjust Stock
@@ -257,7 +382,7 @@ export default function InventoryPage() {
           <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>
             Product Inventory
             <span style={{ marginLeft: '8px', fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>
-              ({filtered.length} of {inventory.length})
+              ({filtered.length} of {products.length})
             </span>
           </div>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -323,7 +448,7 @@ export default function InventoryPage() {
                         fontSize: '10px', fontWeight: 600, padding: '2px 8px', borderRadius: '20px',
                         background: categoryColor(item.category) + '18', color: categoryColor(item.category),
                         border: `1px solid ${categoryColor(item.category)}40`,
-                      }}>{item.category}</span>
+                      }}>{categoryLabel(item.category)}</span>
                     </td>
                     <td style={{ padding: '14px 16px', fontSize: '13px', fontWeight: 700, color: item.stock <= 5 ? '#dc2626' : '#111827' }}>
                       {item.stock} <span style={{ fontWeight: 400, fontSize: '11px', color: '#9ca3af' }}>{item.unit}</span>
@@ -348,7 +473,7 @@ export default function InventoryPage() {
                           Adjust
                         </button>
                         <button
-                          onClick={() => setInventory(prev => prev.filter(p => p.id !== item.id))}
+                          onClick={() => deleteProduct(item.id)}
                           style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', color: '#dc2626', fontSize: '10px', fontWeight: 600, padding: '4px 10px', cursor: 'pointer' }}>
                           Delete
                         </button>

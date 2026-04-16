@@ -1,7 +1,9 @@
 'use client'
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { hasSupabaseConfig } from '@/lib/supabase/client'
 import { getTenants } from '@/lib/supabase/queries'
 import type { Tenant } from '@/lib/supabase/types'
+import { useAuth } from './AuthContext'
 
 // ─── Local Club shape (used internally) ──────────────────────────────────────
 
@@ -103,18 +105,28 @@ const ClubContext = createContext<ClubContextValue | null>(null)
 // ─── Provider ────────────────────────────────────────────────────────────────
 
 export function ClubProvider({ children }: { children: ReactNode }) {
+  const { user, isLoading: authLoading } = useAuth()
   const [clubs, setClubs] = useState<Club[]>(DEMO_CLUBS)
   const [activeClub, setActiveClubState] = useState<Club>(DEMO_CLUBS[0])
   const [isDemo, setIsDemo] = useState(false)
 
   useEffect(() => {
+    if (authLoading) return
+
     async function loadClubs() {
+      if (!hasSupabaseConfig() || !user) {
+        setClubs(DEMO_CLUBS)
+        const defaultClub = DEMO_CLUBS.find(c => c.isActive) ?? DEMO_CLUBS[0]
+        setActiveClubState(defaultClub)
+        setIsDemo(true)
+        return
+      }
+
       try {
         const tenants = await getTenants()
         if (tenants.length > 0) {
           const mapped = tenants.map(tenantToClub)
           setClubs(mapped)
-          // Pick the first active club, or fall back to demo
           const active = mapped.find(c => c.isActive) ?? mapped[0]
           setActiveClubState(active)
           setIsDemo(false)
@@ -123,7 +135,7 @@ export function ClubProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         console.warn('[ClubContext] Supabase unavailable, using demo data:', err)
       }
-      // Fall back to demo data
+
       setClubs(DEMO_CLUBS)
       const defaultClub = DEMO_CLUBS.find(c => c.isActive) ?? DEMO_CLUBS[0]
       setActiveClubState(defaultClub)
@@ -131,7 +143,7 @@ export function ClubProvider({ children }: { children: ReactNode }) {
     }
 
     loadClubs()
-  }, [])
+  }, [authLoading, user])
 
   function setActiveClub(club: Club) {
     setActiveClubState(club)

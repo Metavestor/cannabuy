@@ -1,8 +1,10 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { ReactNode } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { ReactNode, useEffect } from 'react'
 import { useClub } from '../context/ClubContext'
+import { useAuth } from '../context/AuthContext'
+import { hasSupabaseConfig } from '@/lib/supabase/client'
 import ClubSwitcher from './ClubSwitcher'
 
 interface ClubLayoutProps {
@@ -31,7 +33,17 @@ const complianceNav = [
 
 export default function ClubLayout({ title, children }: ClubLayoutProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const { activeClub } = useClub()
+  const { user, isLoading } = useAuth()
+
+  useEffect(() => {
+    if (!hasSupabaseConfig()) return
+    if (isLoading) return
+    if (!user && pathname !== '/login') {
+      router.replace('/login')
+    }
+  }, [isLoading, pathname, router, user])
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard'
