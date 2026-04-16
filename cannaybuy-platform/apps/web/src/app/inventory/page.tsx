@@ -145,7 +145,7 @@ export default function InventoryPage() {
   useEffect(() => {
     if (!activeClub?.id) return
 
-    // Use demo data if in demo mode
+    // Use demo data only when Supabase is unavailable / demo mode is active.
     if (isDemo) {
       setProducts(DEMO_PRODUCTS)
       return
@@ -154,15 +154,11 @@ export default function InventoryPage() {
     setLoading(true)
     getProducts(activeClub.id)
       .then((dbProducts) => {
-        if (dbProducts.length === 0) {
-          setProducts(DEMO_PRODUCTS)
-        } else {
-          setProducts(dbProducts.map(mapDbProduct))
-        }
+        setProducts(dbProducts.map(mapDbProduct))
       })
       .catch((err) => {
         console.error('[inventory] getProducts error:', err)
-        setProducts(DEMO_PRODUCTS)
+        setProducts([])
       })
       .finally(() => setLoading(false))
   }, [activeClub?.id, isDemo])
@@ -297,8 +293,12 @@ export default function InventoryPage() {
     })
 
     // Persist to Supabase if not in demo mode
-    if (!isDemo) {
-      const { error } = await supabase().from('products').update({ is_active: false }).eq('id', id)
+    if (!isDemo && activeClub?.id) {
+      const { error } = await supabase()
+        .from('products')
+        .update({ is_active: false })
+        .eq('id', id)
+        .eq('tenant_id', activeClub.id)
       if (error) console.error('[inventory] deleteProduct error:', error)
     }
   }

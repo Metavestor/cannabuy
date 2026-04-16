@@ -367,6 +367,7 @@ export async function adjustStock(
     .from('products')
     .select('stock_qty')
     .eq('id', productId)
+    .eq('tenant_id', tenantId)
     .single()
 
   if (fetchError || !product) return false
@@ -378,6 +379,7 @@ export async function adjustStock(
     .from('products')
     .update({ stock_qty: qtyAfter })
     .eq('id', productId)
+    .eq('tenant_id', tenantId)
 
   if (updateError) {
     console.error('[queries] adjustStock update error:', updateError)
