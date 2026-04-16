@@ -62,7 +62,7 @@ const styles = {
   shell: {
     maxWidth: '1240px',
     margin: '0 auto',
-    padding: '24px 24px 104px',
+    padding: '20px 20px 64px',
   },
   card: {
     borderRadius: '32px',
@@ -132,14 +132,14 @@ export default function HomePage() {
               </nav>
             </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.04fr 0.96fr', gap: 28, alignItems: 'center', padding: '32px 24px 28px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.02fr 0.98fr', gap: 24, alignItems: 'center', padding: '28px 22px 24px' }}>
               <div>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, borderRadius: 999, border: '1px solid rgba(52,211,153,0.2)', background: 'rgba(52,211,153,0.1)', padding: '10px 16px', fontSize: 12, letterSpacing: '0.26em', fontWeight: 700, color: '#bbf7d0', textTransform: 'uppercase' }}>
                   <span style={{ width: 8, height: 8, borderRadius: 999, background: '#86efac', display: 'inline-block' }} />
                   Built for compliant cannabis club operations
                 </div>
 
-                <h1 style={{ marginTop: 24, maxWidth: 700, fontSize: 74, lineHeight: 0.92, letterSpacing: '-0.06em', marginBottom: 0, color: '#fff', fontWeight: 700 }}>
+                <h1 style={{ marginTop: 20, maxWidth: 700, fontSize: 'clamp(52px, 6.2vw, 68px)', lineHeight: 0.96, letterSpacing: '-0.06em', marginBottom: 0, color: '#fff', fontWeight: 700 }}>
                   Premium club software for South African cannabis retail.
                 </h1>
 
@@ -298,18 +298,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 12, marginTop: 24 }}>
-            {stats.map((stat) => (
-              <div key={stat.label} style={{ borderRadius: 18, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: 16, textAlign: 'center' }}>
-                <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1 }}>{stat.value}</div>
-                <div style={{ marginTop: 6, fontSize: 13, color: 'rgba(255,255,255,0.68)' }}>{stat.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
-      <section id="product" style={{ padding: '24px 24px 0' }}>
+      <section id="product" style={{ padding: '16px 24px 0', scrollMarginTop: 96 }}>
         <div style={{ maxWidth: 1240, margin: '0 auto' }}>
           <div style={{ color: '#86efac', fontSize: 12, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Product showcase</div>
           <h2 style={{ marginTop: 10, color: '#fff', fontSize: 48, lineHeight: 1.02, letterSpacing: '-0.04em', maxWidth: 700, marginBottom: 0 }}>
@@ -321,7 +313,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section style={{ maxWidth: 1240, margin: '0 auto', padding: '20px 24px 24px' }}>
+      <section id="features" style={{ maxWidth: 1240, margin: '0 auto', padding: '20px 24px 24px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 14 }}>
           {features.map((feature) => (
             <article key={feature.title} style={{ borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: 20, boxShadow: '0 20px 50px rgba(0,0,0,0.16)' }}>
@@ -333,7 +325,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="rollout" style={{ maxWidth: 1240, margin: '0 auto', padding: '16px 24px 24px' }}>
+      <section id="rollout" style={{ maxWidth: 1240, margin: '0 auto', padding: '8px 24px 20px' }}>
         <div style={{ borderRadius: 30, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(4,8,15,0.68)', padding: 24, boxShadow: '0 30px 100px rgba(0,0,0,0.3)' }}>
           <div style={{ color: '#bbf7d0', fontSize: 12, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Rollout options</div>
           <h2 style={{ marginTop: 10, color: '#fff', fontSize: 42, lineHeight: 1.05, marginBottom: 0, maxWidth: 700 }}>
