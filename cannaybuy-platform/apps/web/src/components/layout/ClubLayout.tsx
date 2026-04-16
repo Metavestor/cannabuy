@@ -135,6 +135,7 @@ export default function ClubLayout({ title, children }: ClubLayoutProps) {
           </div>
           {[
             { label: 'Clubs', href: '/admin/clubs', icon: '◉' },
+            { label: 'Diagnostics', href: '/admin/diagnostics', icon: '◌' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block', marginBottom: '3px' }}>
               <div style={{
@@ -144,7 +145,11 @@ export default function ClubLayout({ title, children }: ClubLayoutProps) {
                 padding: '10px 12px',
                 borderRadius: '10px',
                 fontSize: '13px',
-                color: '#6b7280',
+                background: isActive(item.href) ? '#f0fdf4' : 'transparent',
+                color: isActive(item.href) ? '#16a34a' : '#6b7280',
+                fontWeight: isActive(item.href) ? 600 : 400,
+                border: isActive(item.href) ? '1px solid #bbf7d0' : '1px solid transparent',
+                transition: 'all 0.15s',
               }}>
                 <span style={{ fontSize: '13px', width: '18px', textAlign: 'center' }}>{item.icon}</span>
                 {item.label}
