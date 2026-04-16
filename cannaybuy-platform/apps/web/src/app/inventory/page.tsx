@@ -82,10 +82,10 @@ export default function InventoryPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
       <aside style={{ width: '240px', background: 'white', borderRight: '0.5px solid #e5e7eb', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-        <div style={{ padding: '20px 16px 16px', borderBottom: '0.5px solid #e5e7eb' }}>
-          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '240px', height: 'auto', display: 'block' }} />
-          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>Cannabis Club Management</div>
-          <div style={{ display: 'inline-block', marginTop: '8px', background: '#e8f5ef', color: '#1a7a4a', fontSize: '10px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px' }}>ZA COMPLIANT</div>
+        <div style={{ padding: '12px 8px 8px', borderBottom: '0.5px solid #e5e7eb', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '240px', height: 'auto', display: 'block', margin: '0 auto' }} />
+          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px', textAlign: 'center' }}>Cannabis Club Management</div>
+          <div style={{ display: 'inline-block', marginTop: '6px', background: '#e8f5ef', color: '#1a7a4a', fontSize: '10px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', textAlign: 'center' }}>ZA COMPLIANT</div>
         </div>
         <nav style={{ padding: '12px 8px', flex: 1 }}>
           {[
