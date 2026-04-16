@@ -111,7 +111,7 @@ function mapDbMember(member: DbMember, txns: DbTransaction[]): MemberUi {
 
 export default function MembersPage() {
   const { activeClubId, isDemo } = useClub()
-  const [members, setMembers] = useState<MemberUi[]>(DEMO_MEMBERS)
+  const [members, setMembers] = useState<MemberUi[]>([])
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [ficaFilter, setFicaFilter] = useState<string>('All')
@@ -134,8 +134,13 @@ export default function MembersPage() {
     let cancelled = false
 
     async function load() {
-      if (!hasSupabaseConfig() || isDemo || !activeClubId) {
+      if (!hasSupabaseConfig() || isDemo) {
         setMembers(DEMO_MEMBERS)
+        return
+      }
+
+      if (!activeClubId) {
+        setMembers([])
         return
       }
 
@@ -147,11 +152,11 @@ export default function MembersPage() {
         ])
         if (!cancelled) {
           const mapped = dbMembers.map(m => mapDbMember(m, dbTxns))
-          setMembers(mapped.length ? mapped : DEMO_MEMBERS)
+          setMembers(mapped)
         }
       } catch (error) {
         console.error('[members] load error:', error)
-        if (!cancelled) setMembers(DEMO_MEMBERS)
+        if (!cancelled) setMembers([])
       } finally {
         if (!cancelled) setLoading(false)
       }

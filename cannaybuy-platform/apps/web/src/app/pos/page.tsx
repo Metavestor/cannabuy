@@ -2,6 +2,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import ClubLayout from '../../components/layout/ClubLayout'
 import { useClub } from '../../components/context/ClubContext'
+import { hasSupabaseConfig } from '@/lib/supabase/client'
 import { getProducts, getMembers, createTransaction, adjustStock } from '@/lib/supabase/queries'
 import type { Product, Member } from '@/lib/supabase/types'
 
@@ -215,8 +216,8 @@ function ReceiptModal({ tx, onClose }: { tx: TransactionRecord; onClose: () => v
 export default function POSPage() {
   const { activeClubId, isDemo } = useClub()
 
-  const [allProducts, setAllProducts] = useState<CartItem[]>(MOCK_PRODUCTS)
-  const [allMembers, setAllMembers] = useState<POSMember[]>(MOCK_POS_MEMBERS)
+  const [allProducts, setAllProducts] = useState<CartItem[]>([])
+  const [allMembers, setAllMembers] = useState<POSMember[]>([])
   const [cart, setCart] = useState<CartItem[]>([])
   const [selectedMember, setSelectedMember] = useState<POSMember | null>(null)
   const [memberSearch, setMemberSearch] = useState('')
@@ -230,20 +231,29 @@ export default function POSPage() {
   // ── Load products & members from Supabase (falls back to mock) ───────────────
   useEffect(() => {
     async function load() {
-      if (!activeClubId || isDemo) return
+      if (!hasSupabaseConfig() || isDemo) {
+        setAllProducts(MOCK_PRODUCTS)
+        setAllMembers(MOCK_POS_MEMBERS)
+        return
+      }
+
+      if (!activeClubId) {
+        setAllProducts([])
+        setAllMembers([])
+        return
+      }
+
       try {
         const [products, members] = await Promise.all([
           getProducts(activeClubId),
           getMembers(activeClubId),
         ])
-        if (products.length > 0) {
-          setAllProducts(products.map(productToCartItem))
-        }
-        if (members.length > 0) {
-          setAllMembers(members.map(m => memberToPOS(m)))
-        }
+        setAllProducts(products.map(productToCartItem))
+        setAllMembers(members.map(m => memberToPOS(m)))
       } catch (err) {
-        console.warn('[POS] Supabase unavailable, using demo data:', err)
+        console.warn('[POS] load error:', err)
+        setAllProducts([])
+        setAllMembers([])
       }
     }
     load()

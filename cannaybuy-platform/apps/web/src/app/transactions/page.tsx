@@ -91,7 +91,7 @@ function mapDbTxn(txn: DbTransaction, memberName: string, lineItems: Transaction
 
 export default function TransactionsPage() {
   const { activeClubId, isDemo } = useClub()
-  const [transactions, setTransactions] = useState<UiTransaction[]>(DEMO_TRANSACTIONS)
+  const [transactions, setTransactions] = useState<UiTransaction[]>([])
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [dateFilter, setDateFilter] = useState('all')
@@ -105,8 +105,13 @@ export default function TransactionsPage() {
     let cancelled = false
 
     async function load() {
-      if (!hasSupabaseConfig() || isDemo || !activeClubId) {
+      if (!hasSupabaseConfig() || isDemo) {
         setTransactions(DEMO_TRANSACTIONS)
+        return
+      }
+
+      if (!activeClubId) {
+        setTransactions([])
         return
       }
 
@@ -128,12 +133,10 @@ export default function TransactionsPage() {
           })
         )
 
-        if (!cancelled) {
-          setTransactions(mapped.length ? mapped : DEMO_TRANSACTIONS)
-        }
+        if (!cancelled) setTransactions(mapped)
       } catch (error) {
         console.error('[transactions] load error:', error)
-        if (!cancelled) setTransactions(DEMO_TRANSACTIONS)
+        if (!cancelled) setTransactions([])
       } finally {
         if (!cancelled) setLoading(false)
       }
