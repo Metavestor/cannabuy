@@ -24,8 +24,9 @@ export default function EnvironmentBanner({ compact = false }: EnvironmentBanner
       <div style={{ fontWeight: 800, marginBottom: '4px' }}>Production config missing</div>
       <div>
         Supabase environment variables are not set for this deployment. The app will stay in demo mode until{' '}
-        <code style={{ fontFamily: 'monospace' }}>NEXT_PUBLIC_SUPABASE_URL</code> and{' '}
-        <code style={{ fontFamily: 'monospace' }}>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> are configured.
+        <code style={{ fontFamily: 'monospace' }}>NEXT_PUBLIC_SUPABASE_URL</code> and either{' '}
+        <code style={{ fontFamily: 'monospace' }}>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> or{' '}
+        <code style={{ fontFamily: 'monospace' }}>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> are configured.
       </div>
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '10px' }}>
         <Link href="/admin/diagnostics" style={{ color: '#92400e', fontWeight: 700, textDecoration: 'underline' }}>

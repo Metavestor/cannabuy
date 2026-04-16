@@ -1,8 +1,12 @@
 import { createBrowserClient } from '@supabase/ssr'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+function getSupabaseKey(): string | undefined {
+  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+}
+
 export function hasSupabaseConfig(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && getSupabaseKey())
 }
 
 /**
@@ -16,6 +20,6 @@ export function supabase(): SupabaseClient {
 
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    getSupabaseKey()!
   )
 }

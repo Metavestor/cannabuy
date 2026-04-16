@@ -6,7 +6,7 @@ This checklist is for bringing CannaBuy live in a commercially safe way.
 Set these in Vercel for the production deployment:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`)
 - `NEXT_PUBLIC_APP_NAME` (optional)
 
 If the app is behind additional services, document those separately here.
