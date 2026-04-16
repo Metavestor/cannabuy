@@ -83,6 +83,23 @@ export async function getMembers(tenantId: string): Promise<Member[]> {
   return (data as Member[]) ?? []
 }
 
+export async function getAllMembers(tenantId: string): Promise<Member[]> {
+  if (!ready()) return empty<Member>()
+
+  const { data, error } = await supabase()
+    .from('members')
+    .select('*')
+    .eq('tenant_id', tenantId)
+    .order('first_name')
+
+  if (error) {
+    console.error('[queries] getAllMembers error:', error)
+    return []
+  }
+
+  return (data as Member[]) ?? []
+}
+
 export async function getMemberById(id: string): Promise<Member | null> {
   if (!ready()) return null
 
