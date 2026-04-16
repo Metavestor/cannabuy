@@ -48,30 +48,30 @@ export default function MembersPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8f9fa' }}>
-      <aside style={{ width: '240px', background: 'white', borderRight: '0.5px solid #e5e7eb', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-        <div style={{ padding: '12px 8px 8px', borderBottom: '0.5px solid #e5e7eb', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '240px', height: 'auto', display: 'block', margin: '0 auto' }} />
-          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px', textAlign: 'center' }}>Cannabis Club Management</div>
-          <div style={{ display: 'inline-block', marginTop: '6px', background: '#e8f5ef', color: '#1a7a4a', fontSize: '10px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', textAlign: 'center' }}>ZA COMPLIANT</div>
+      <aside style={{ width: '240px', background: '#1a1a2e', borderRight: '0.5px solid #2a2a3e', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+        <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #2a2a3e' }}>
+          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png" alt="CannaBuy" style={{ width: '160px', height: 'auto', display: 'block' }} />
+          <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px', letterSpacing: '0.3px' }}>Cannabis Club Management</div>
+          <div style={{ display: 'inline-block', marginTop: '6px', background: '#16213e', color: '#4ade80', fontSize: '9px', fontWeight: '700', padding: '3px 8px', borderRadius: '4px', letterSpacing: '0.5px', border: '1px solid #1a3a2a' }}>ZA COMPLIANT</div>
         </div>
-        <nav style={{ padding: '12px 8px', flex: 1 }}>
+        <nav style={{ padding: '10px 8px', flex: 1 }}>
           {[
-            { label: 'Dashboard', href: '/dashboard', icon: '▦' },
+            { label: 'Dashboard', href: '/dashboard', icon: '▦', active: false },
             { label: 'Members', href: '/members', icon: '👥', active: true },
-            { label: 'Inventory', href: '/inventory', icon: '📦' },
-            { label: 'Point of Sale', href: '/pos', icon: '🧾' },
-            { label: 'Products', href: '/admin/products', icon: '📋' },
-            { label: 'Transactions', href: '/transactions', icon: '📊' },
-          ].map(item => (
+            { label: 'Inventory', href: '/inventory', icon: '📦', active: false },
+            { label: 'Point of Sale', href: '/pos', icon: '🧾', active: false },
+            { label: 'Products', href: '/admin/products', icon: '📋', active: false },
+            { label: 'Transactions', href: '/transactions', icon: '📊', active: false },
+          ].map((item: any) => (
             <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '8px', marginBottom: '2px', fontSize: '13px', background: (item as any).active ? '#e8f5ef' : 'transparent', color: (item as any).active ? '#1a7a4a' : '#6b7280', fontWeight: (item as any).active ? '600' : '400' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '6px', marginBottom: '2px', fontSize: '13px', background: item.active ? '#4ade80' : 'transparent', color: item.active ? '#1a1a2e' : '#9ca3af', fontWeight: item.active ? '600' : '400' }}>
                 <span style={{ fontSize: '14px', width: '18px', textAlign: 'center' }}>{item.icon}</span>
                 {item.label}
               </div>
             </Link>
           ))}
         </nav>
-        <div style={{ padding: '12px 16px', borderTop: '0.5px solid #e5e7eb', fontSize: '11px', color: '#9ca3af' }}>v1.0 · South Africa</div>
+        <div style={{ padding: '12px 16px', borderTop: '1px solid #2a2a3e', fontSize: '11px', color: '#6b7280' }}>v1.0 · South Africa</div>
       </aside>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
