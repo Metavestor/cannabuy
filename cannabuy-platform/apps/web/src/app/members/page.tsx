@@ -5,7 +5,7 @@ export default function MembersPage() {
     <div style={{ display:'flex', minHeight:'100vh', background:'#f8f9fa' }}>
       <aside style={{ width:'220px', background:'white', borderRight:'0.5px solid #e5e7eb', display:'flex', flexDirection:'column', flexShrink:0 }}>
         <div style={{ padding:'20px 16px 16px', borderBottom:'0.5px solid #e5e7eb' }}>
-          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannabuy-platform/logo.png" alt="CannaBuy" style={{ height:'40px', objectFit:'contain', maxWidth:'160px' }} />
+          <img src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannabuy-platform/logo.png" alt="CannaBuy" style={{ height:'64px', objectFit:'contain', maxWidth:'180px' }} />
           <div style={{ display:'inline-block', marginTop:'8px', background:'#e8f5ef', color:'#1a7a4a', fontSize:'10px', fontWeight:'600', padding:'2px 8px', borderRadius:'10px' }}>ZA COMPLIANT</div>
         </div>
         <nav style={{ padding:'12px 8px', flex:1 }}>
