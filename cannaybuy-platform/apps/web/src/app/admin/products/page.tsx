@@ -44,6 +44,22 @@ export default function ProductsPage() {
             </Link>
           ))}
         </nav>
+        <div style={{ fontSize: '9px', color: '#d1d5db', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, padding: '0 12px', margin: '20px 0 10px' }}>Compliance</div>
+        {[
+          { label: 'Audit Trail', href: '/admin/audit', icon: '▤' },
+          { label: 'FICA Verification', href: '/admin/fica', icon: '▥' },
+          { label: 'VAT Reports', href: '/reports/vat', icon: '▦' },
+          { label: 'DAA Reports', href: '/reports/daa', icon: '▧' },
+        ].map(item => (
+          <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block', marginBottom: '3px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '11px', padding: '10px 12px', borderRadius: '10px', fontSize: '13px', color: '#6b7280' }}>
+              <span style={{ fontSize: '13px', width: '18px', textAlign: 'center' }}>{item.icon}</span>
+              {item.label}
+            </div>
+          </Link>
+        ))}
+
+        
         <div style={{ padding: '20px 20px', borderTop: '1px solid #d1fae5' }}>
           <div style={{ fontSize: '11px', fontWeight: 600, color: '#9ca3af' }}>CannaBuy POS</div>
           <div style={{ fontSize: '10px', color: '#d1d5db', marginTop: '3px' }}>v1.0 · South Africa</div>
