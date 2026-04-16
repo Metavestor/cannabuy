@@ -1,7 +1,13 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
-export function createClient() {
+/**
+ * Server-side Supabase client factory.
+ * Creates a new instance per request using Next.js App Router cookie store.
+ * Use this in Server Components and Server Actions.
+ */
+export function supabase(): SupabaseClient {
   const cookieStore = cookies()
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,3 +25,6 @@ export function createClient() {
     }
   )
 }
+
+// Backwards-compatible alias
+export { supabase as createClient }
