@@ -313,13 +313,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="features" style={{ maxWidth: 1240, margin: '0 auto', padding: '20px 24px 24px' }}>
+      <section id="features" style={{ maxWidth: 1240, margin: '0 auto', padding: '28px 24px 30px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', marginBottom: 14 }}>
+          <div>
+            <div style={{ color: '#16a34a', fontSize: 12, fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Commercial pillars</div>
+            <h2 style={{ marginTop: 10, color: '#0f172a', fontSize: 'clamp(32px, 4vw, 48px)', lineHeight: 1.02, letterSpacing: '-0.05em', maxWidth: 720, marginBottom: 0 }}>
+              Built to look premium, and built to operate.
+            </h2>
+          </div>
+          <p style={{ margin: 0, maxWidth: 460, color: '#475569', fontSize: 16, lineHeight: 1.7 }}>
+            The page now presents CannaBuy as a commercial product suite instead of a plain admin shell.
+          </p>
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 14 }}>
           {features.map((feature) => (
-            <article key={feature.title} style={{ borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: 20, boxShadow: '0 20px 50px rgba(0,0,0,0.16)' }}>
-              <div style={{ width: 44, height: 44, borderRadius: 16, display: 'grid', placeItems: 'center', background: 'rgba(52,211,153,0.1)', fontSize: 20 }}>{feature.icon}</div>
-              <h3 style={{ marginTop: 16, color: '#fff', fontSize: 19, lineHeight: 1.2 }}>{feature.title}</h3>
-              <p style={{ marginTop: 8, color: 'rgba(255,255,255,0.7)', fontSize: 14, lineHeight: 1.6 }}>{feature.copy}</p>
+            <article key={feature.title} style={{ borderRadius: 26, border: '1px solid rgba(15,23,42,0.08)', background: 'linear-gradient(180deg, #ffffff 0%, #f8faf8 100%)', padding: 20, boxShadow: '0 18px 40px rgba(15,23,42,0.06)' }}>
+              <div style={{ width: 46, height: 46, borderRadius: 16, display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, rgba(22,163,74,0.14), rgba(134,239,172,0.34))', color: '#166534', fontSize: 20, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7)' }}>
+                {feature.icon}
+              </div>
+              <h3 style={{ marginTop: 16, color: '#0f172a', fontSize: 19, lineHeight: 1.2 }}>{feature.title}</h3>
+              <p style={{ marginTop: 8, color: '#475569', fontSize: 14, lineHeight: 1.7 }}>{feature.copy}</p>
             </article>
           ))}
         </div>

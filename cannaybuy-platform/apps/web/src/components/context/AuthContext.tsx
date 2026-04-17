@@ -15,7 +15,7 @@ interface AuthContextValue {
   user: AuthUser | null
   session: Session | null
   isLoading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+  signIn: (email: string, password: string) => Promise<{ error: Error | null; session: Session | null }>
   signOut: () => Promise<{ error: Error | null }>
   refreshProfile: () => Promise<void>
 }
@@ -46,9 +46,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshProfile = useCallback(async () => {
     if (!session?.user) return
     const profile = await fetchProfile(session.user.id)
-    if (profile) {
-      setUser({ id: session.user.id, email: session.user.email ?? '', profile })
-    }
+    setUser({
+      id: session.user.id,
+      email: session.user.email ?? '',
+      profile,
+    })
   }, [session, fetchProfile])
 
   // Listen to auth state changes and load profile
@@ -64,11 +66,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session as Session | null)
       if (session?.user) {
         const profile = await fetchProfile(session.user.id)
-        setUser(
-          profile
-            ? { id: session.user.id, email: session.user.email ?? '', profile }
-            : null
-        )
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? '',
+          profile,
+        })
       } else {
         setUser(null)
       }
@@ -82,15 +84,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session as Session | null)
         if (session?.user) {
           fetchProfile(session.user.id).then((profile) => {
-            setUser(
-              profile
-                ? {
-                    id: session.user.id,
-                    email: session.user.email ?? '',
-                    profile,
-                  }
-                : null
-            )
+            setUser({
+              id: session.user.id,
+              email: session.user.email ?? '',
+              profile,
+            })
             setIsLoading(false)
           })
         } else {
@@ -104,14 +102,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     if (!hasSupabaseConfig()) {
-      return { error: new Error('Supabase environment variables are missing') }
+      return { error: new Error('Supabase environment variables are missing'), session: null }
     }
 
-    const { error } = await supabase().auth.signInWithPassword({
+    const { data, error } = await supabase().auth.signInWithPassword({
       email,
       password,
     })
-    return { error: error as Error | null }
+
+    if (!error) {
+      setSession(data.session)
+      if (data.session?.user) {
+        const profile = await fetchProfile(data.session.user.id)
+        setUser({
+          id: data.session.user.id,
+          email: data.session.user.email ?? '',
+          profile,
+        })
+      }
+    }
+
+    return { error: error as Error | null, session: data.session ?? null }
   }
 
   const signOut = async () => {

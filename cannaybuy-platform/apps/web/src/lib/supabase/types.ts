@@ -228,5 +228,5 @@ export interface User {
 export interface AuthUser {
   id: string
   email: string
-  profile: UserProfile
+  profile: UserProfile | null
 }
