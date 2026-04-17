@@ -4,7 +4,7 @@ import ClubLayout from '../../components/layout/ClubLayout'
 import { useClub } from '../../components/context/ClubContext'
 import { getProducts, adjustStock } from '../../lib/supabase/queries'
 import type { Product as DbProduct } from '../../lib/supabase/types'
-import { supabase } from '../../lib/supabase/client'
+import { supabase, hasSupabaseConfig } from '../../lib/supabase/client'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -143,24 +143,43 @@ export default function InventoryPage() {
 
   // ── Load products from Supabase ─────────────────────────────────────────────
   useEffect(() => {
-    if (!activeClub?.id) return
+    let cancelled = false
 
-    // Use demo data only when Supabase is unavailable / demo mode is active.
-    if (isDemo) {
-      setProducts(DEMO_PRODUCTS)
-      return
+    async function loadProducts() {
+      if (!activeClub?.id) {
+        setProducts(DEMO_PRODUCTS)
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+
+      if (!hasSupabaseConfig() || isDemo) {
+        if (!cancelled) {
+          setProducts(DEMO_PRODUCTS)
+          setLoading(false)
+        }
+        return
+      }
+
+      try {
+        const dbProducts = await getProducts(activeClub.id)
+        if (cancelled) return
+
+        const nextProducts = dbProducts.length > 0 ? dbProducts.map(mapDbProduct) : DEMO_PRODUCTS
+        setProducts(nextProducts)
+      } catch (err) {
+        console.error('[inventory] getProducts error:', err)
+        if (!cancelled) setProducts(DEMO_PRODUCTS)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     }
 
-    setLoading(true)
-    getProducts(activeClub.id)
-      .then((dbProducts) => {
-        setProducts(dbProducts.map(mapDbProduct))
-      })
-      .catch((err) => {
-        console.error('[inventory] getProducts error:', err)
-        setProducts([])
-      })
-      .finally(() => setLoading(false))
+    loadProducts()
+    return () => {
+      cancelled = true
+    }
   }, [activeClub?.id, isDemo])
 
   // ── Filtered products ───────────────────────────────────────────────────────

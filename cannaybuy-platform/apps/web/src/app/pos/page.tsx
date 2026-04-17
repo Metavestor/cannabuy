@@ -230,16 +230,22 @@ export default function POSPage() {
 
   // ── Load products & members from Supabase (falls back to mock) ───────────────
   useEffect(() => {
+    let cancelled = false
+
     async function load() {
       if (!hasSupabaseConfig() || isDemo) {
-        setAllProducts(MOCK_PRODUCTS)
-        setAllMembers(MOCK_POS_MEMBERS)
+        if (!cancelled) {
+          setAllProducts(MOCK_PRODUCTS)
+          setAllMembers(MOCK_POS_MEMBERS)
+        }
         return
       }
 
       if (!activeClubId) {
-        setAllProducts([])
-        setAllMembers([])
+        if (!cancelled) {
+          setAllProducts(MOCK_PRODUCTS)
+          setAllMembers(MOCK_POS_MEMBERS)
+        }
         return
       }
 
@@ -248,15 +254,22 @@ export default function POSPage() {
           getProducts(activeClubId),
           getMembers(activeClubId),
         ])
-        setAllProducts(products.map(productToCartItem))
-        setAllMembers(members.map(m => memberToPOS(m)))
+        if (cancelled) return
+
+        setAllProducts(products.length > 0 ? products.map(productToCartItem) : MOCK_PRODUCTS)
+        setAllMembers(members.length > 0 ? members.map(m => memberToPOS(m)) : MOCK_POS_MEMBERS)
       } catch (err) {
         console.warn('[POS] load error:', err)
-        setAllProducts([])
-        setAllMembers([])
+        if (!cancelled) {
+          setAllProducts(MOCK_PRODUCTS)
+          setAllMembers(MOCK_POS_MEMBERS)
+        }
       }
     }
     load()
+    return () => {
+      cancelled = true
+    }
   }, [activeClubId, isDemo])
 
   // ── Filtered products ───────────────────────────────────────────────────────
