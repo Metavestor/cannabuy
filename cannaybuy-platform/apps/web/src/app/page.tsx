@@ -65,19 +65,12 @@ export default function HomePage() {
           maxWidth: '1200px', margin: '0 auto', padding: '0 24px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '10px',
-              background: 'linear-gradient(135deg, #10b981, #059669)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 20px rgba(16,185,129,0.3)'
-            }}>
-              <img
-                src="/logo.png"
-                alt="CannaBuy"
-                style={{ width: '22px', height: '22px', objectFit: 'contain' }}
-              />
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <img
+              src="/logo.png"
+              alt="CannaBuy"
+              style={{ width: '34px', height: '34px', objectFit: 'contain' }}
+            />
             <span style={{
               fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em',
               background: 'linear-gradient(135deg, #f8fafc, #94a3b8)',
@@ -515,17 +508,11 @@ export default function HomePage() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '28px', height: '28px', borderRadius: '8px',
-              background: 'linear-gradient(135deg, #10b981, #059669)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <img
-                src="/logo.png"
-                alt="CannaBuy"
-                style={{ width: '16px', height: '16px', objectFit: 'contain' }}
-              />
-            </div>
+            <img
+              src="/logo.png"
+              alt="CannaBuy"
+              style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+            />
             <span style={{ fontSize: '14px', fontWeight: 600, color: '#94a3b8' }}>CannaBuy</span>
           </div>
           <div style={{ display: 'flex', gap: '24px' }}>
