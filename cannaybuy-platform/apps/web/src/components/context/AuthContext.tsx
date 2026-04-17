@@ -113,12 +113,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!error) {
       setSession(data.session)
       if (data.session?.user) {
-        const profile = await fetchProfile(data.session.user.id)
+        const userId = data.session.user.id
+        const userEmail = data.session.user.email ?? ''
+
+        // Do not block the sign-in completion on profile hydration.
+        // Some browsers or Supabase setups can delay the profile lookup,
+        // which makes the button appear stuck on "Signing in".
         setUser({
-          id: data.session.user.id,
-          email: data.session.user.email ?? '',
-          profile,
+          id: userId,
+          email: userEmail,
+          profile: null,
         })
+
+        fetchProfile(userId)
+          .then((profile) => {
+            setUser({
+              id: userId,
+              email: userEmail,
+              profile,
+            })
+          })
+          .catch(() => {
+            // Keep the authenticated session; profile enrichment is non-fatal.
+          })
       }
     }
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '../../components/context/AuthContext'
 import EnvironmentBanner from '../../components/common/EnvironmentBanner'
 
@@ -18,7 +17,6 @@ const metrics = [
 ]
 
 export default function LoginPage() {
-  const router = useRouter()
   const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -42,8 +40,7 @@ export default function LoginPage() {
         return
       }
 
-      router.replace('/dashboard')
-      router.refresh()
+      window.location.assign('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
