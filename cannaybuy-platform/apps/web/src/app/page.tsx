@@ -65,19 +65,12 @@ export default function HomePage() {
           maxWidth: '1200px', margin: '0 auto', padding: '0 24px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img
               src="/logo.png"
               alt="CannaBuy"
-              style={{ width: '34px', height: '34px', objectFit: 'contain' }}
+              style={{ width: '150px', height: 'auto', objectFit: 'contain' }}
             />
-            <span style={{
-              fontSize: '20px', fontWeight: 700, letterSpacing: '-0.02em',
-              background: 'linear-gradient(135deg, #f8fafc, #94a3b8)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
-            }}>
-              CannaBuy
-            </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Link href="/login" style={{
@@ -511,9 +504,8 @@ export default function HomePage() {
             <img
               src="/logo.png"
               alt="CannaBuy"
-              style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+              style={{ width: '100px', height: 'auto', objectFit: 'contain' }}
             />
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#94a3b8' }}>CannaBuy</span>
           </div>
           <div style={{ display: 'flex', gap: '24px' }}>
             <Link href="/login" style={{ fontSize: '13px', color: '#64748b', textDecoration: 'none' }}>Sign in</Link>
