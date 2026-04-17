@@ -63,11 +63,10 @@ export async function POST(request: Request) {
     const serviceClient = createServiceClient()
     const user = userData.user
     const role = normalizeRole(user.user_metadata?.role ?? user.app_metadata?.role)
-    const fullName = typeof user.user_metadata?.full_name === 'string' ? user.user_metadata.full_name : null
 
     const { data: existingProfile, error: profileLookupError } = await serviceClient
       .from('user_profiles')
-      .select('id, tenant_id, email, full_name, role, is_active, created_at, updated_at')
+      .select('id, tenant_id, role')
       .eq('id', user.id)
       .maybeSingle()
 
@@ -101,14 +100,11 @@ export async function POST(request: Request) {
         {
           id: user.id,
           tenant_id: tenantId,
-          email: user.email ?? '',
-          full_name: fullName,
           role,
-          is_active: true,
         },
         { onConflict: 'id' }
       )
-      .select('id, tenant_id, email, full_name, role, is_active, created_at, updated_at')
+      .select('id, tenant_id, role')
       .single()
 
     if (insertError || !createdProfile) {
