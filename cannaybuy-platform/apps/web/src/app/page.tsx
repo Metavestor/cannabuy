@@ -31,36 +31,46 @@ const stats = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main style={{ minHeight: '100vh', background: '#fff' }}>
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section style={{ position: 'relative', overflow: 'hidden' }}>
         {/* Gradient accent */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/3 w-96 h-96 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full blur-3xl" />
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div style={{
+            position: 'absolute', top: 0, left: '33%', width: '384px', height: '384px',
+            background: 'linear-gradient(135deg, rgba(59,130,246,0.05), rgba(147,51,234,0.05))',
+            borderRadius: '50%', filter: 'blur(72px)'
+          }} />
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-6 py-20">
-          {/* Navigation - minimal inline */}
-          <nav className="flex items-center justify-between mb-24">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center">
+        <div style={{ position: 'relative', maxWidth: '1152px', margin: '0 auto', padding: '80px 24px' }}>
+          {/* Navigation */}
+          <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '96px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '40px', height: '40px', borderRadius: '12px', background: '#0f172a',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
                 <Image
                   src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png"
                   alt="CannaBuy"
                   width={24}
                   height={24}
-                  className="object-contain"
+                  style={{ objectFit: 'contain' }}
                 />
               </div>
-              <span className="text-xl font-medium text-slate-900 tracking-tight">CannaBuy</span>
+              <span style={{ fontSize: '20px', fontWeight: 500, color: '#0f172a', letterSpacing: '-0.01em' }}>CannaBuy</span>
             </div>
-            <div className="flex items-center gap-8">
-              <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+              <Link href="/login" style={{ fontSize: '14px', fontWeight: 500, color: '#475569', textDecoration: 'none' }}>
                 Sign in
               </Link>
               <Link
                 href="/login"
-                className="text-sm font-medium bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors"
+                style={{
+                  fontSize: '14px', fontWeight: 500, background: '#0f172a', color: '#fff',
+                  padding: '10px 20px', borderRadius: '8px', textDecoration: 'none'
+                }}
               >
                 Get started
               </Link>
@@ -68,31 +78,45 @@ export default function HomePage() {
           </nav>
 
           {/* Hero Content */}
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}>
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 mb-8">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-sm font-medium text-slate-600">Now available for South African clubs</span>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px',
+                borderRadius: '9999px', background: '#f8fafc', border: '1px solid #e2e8f0', marginBottom: '32px'
+              }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+                <span style={{ fontSize: '14px', fontWeight: 500, color: '#475569' }}>Now available for South African clubs</span>
               </div>
 
-              <h1 className="text-5xl lg:text-6xl font-light text-slate-900 leading-[1.1] tracking-tight mb-6">
+              <h1 style={{
+                fontSize: 'clamp(48px, 5vw, 60px)', fontWeight: 300, color: '#0f172a',
+                lineHeight: 1.1, letterSpacing: '-0.01em', marginBottom: '24px'
+              }}>
                 Point of sale built for cannabis clubs
               </h1>
 
-              <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-lg">
+              <p style={{ fontSize: '18px', color: '#475569', lineHeight: 1.7, marginBottom: '32px', maxWidth: '512px' }}>
                 CannaBuy unifies point-of-sale, member management, inventory tracking, and compliance reporting in one enterprise-grade platform designed for the South African cannabis industry.
               </p>
 
-              <div className="flex flex-wrap gap-4">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
                 <Link
                   href="/login"
-                  className="inline-flex items-center justify-center text-base font-medium bg-slate-900 text-white px-8 py-3.5 rounded-lg hover:bg-slate-800 transition-colors"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '16px', fontWeight: 500, background: '#0f172a', color: '#fff',
+                    padding: '14px 32px', borderRadius: '8px', textDecoration: 'none'
+                  }}
                 >
                   Start free trial
                 </Link>
                 <Link
                   href="#features"
-                  className="inline-flex items-center justify-center text-base font-medium text-slate-700 bg-slate-50 px-8 py-3.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '16px', fontWeight: 500, color: '#334155', background: '#f8fafc',
+                    padding: '14px 32px', borderRadius: '8px', border: '1px solid #e2e8f0', textDecoration: 'none'
+                  }}
                 >
                   Learn more
                 </Link>
@@ -100,70 +124,89 @@ export default function HomePage() {
             </div>
 
             {/* Product Preview Card */}
-            <div className="relative">
-              <div className="relative rounded-2xl bg-white border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_32px_rgba(0,0,0,0.06)] overflow-hidden">
+            <div style={{ position: 'relative' }}>
+              <div style={{
+                position: 'relative', borderRadius: '16px', background: '#fff', border: '1px solid #e2e8f0',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06)', overflow: 'hidden'
+              }}>
                 {/* Window controls */}
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100 bg-slate-50/50">
-                  <div className="w-3 h-3 rounded-full bg-slate-300" />
-                  <div className="w-3 h-3 rounded-full bg-slate-300" />
-                  <div className="w-3 h-3 rounded-full bg-slate-300" />
-                  <div className="ml-auto text-xs font-medium text-slate-400">CannaBuy POS</div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px',
+                  borderBottom: '1px solid #f1f5f9', background: 'rgba(248,250,252,0.5)'
+                }}>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#cbd5e1' }} />
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#cbd5e1' }} />
+                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#cbd5e1' }} />
+                  <div style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: 500, color: '#94a3b8' }}>CannaBuy POS</div>
                 </div>
 
                 {/* Mock POS Interface */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-6">
+                <div style={{ padding: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
                     <div>
-                      <div className="text-sm font-medium text-slate-500 uppercase tracking-wide">Current Transaction</div>
-                      <div className="text-2xl font-semibold text-slate-900 mt-1">R 610.00</div>
+                      <div style={{ fontSize: '14px', fontWeight: 500, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Current Transaction</div>
+                      <div style={{ fontSize: '24px', fontWeight: 600, color: '#0f172a', marginTop: '4px' }}>R 610.00</div>
                     </div>
-                    <div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium border border-emerald-100">
+                    <div style={{
+                      padding: '4px 12px', borderRadius: '9999px', background: '#ecfdf5', color: '#047857',
+                      fontSize: '14px', fontWeight: 500, border: '1px solid #d1fae5'
+                    }}>
                       Active
                     </div>
                   </div>
 
-                  <div className="space-y-3 mb-6">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
                     {[
                       { name: 'Durban Poison', variant: '3.5g Flower', price: 'R 200.00' },
                       { name: 'Cold Creek Kush', variant: '3.5g Flower', price: 'R 210.00' },
                       { name: 'CBD Oil Tincture', variant: '30ml', price: 'R 200.00' },
                     ].map((item) => (
-                      <div key={item.name} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-100">
+                      <div key={item.name} style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '12px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #f1f5f9'
+                      }}>
                         <div>
-                          <div className="font-medium text-slate-900">{item.name}</div>
-                          <div className="text-sm text-slate-500">{item.variant}</div>
+                          <div style={{ fontWeight: 500, color: '#0f172a' }}>{item.name}</div>
+                          <div style={{ fontSize: '14px', color: '#64748b' }}>{item.variant}</div>
                         </div>
-                        <div className="font-medium text-slate-900">{item.price}</div>
+                        <div style={{ fontWeight: 500, color: '#0f172a' }}>{item.price}</div>
                       </div>
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-center">
-                      <div className="text-lg font-semibold text-slate-900">24</div>
-                      <div className="text-xs text-slate-500 mt-0.5">Today</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                    <div style={{ padding: '12px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #f1f5f9', textAlign: 'center' }}>
+                      <div style={{ fontSize: '18px', fontWeight: 600, color: '#0f172a' }}>24</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>Today</div>
                     </div>
-                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-center">
-                      <div className="text-lg font-semibold text-slate-900">R 48k</div>
-                      <div className="text-xs text-slate-500 mt-0.5">Revenue</div>
+                    <div style={{ padding: '12px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #f1f5f9', textAlign: 'center' }}>
+                      <div style={{ fontSize: '18px', fontWeight: 600, color: '#0f172a' }}>R 48k</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>Revenue</div>
                     </div>
-                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-center">
-                      <div className="text-lg font-semibold text-slate-900">6</div>
-                      <div className="text-xs text-slate-500 mt-0.5">Low Stock</div>
+                    <div style={{ padding: '12px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #f1f5f9', textAlign: 'center' }}>
+                      <div style={{ fontSize: '18px', fontWeight: 600, color: '#0f172a' }}>6</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>Low Stock</div>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Floating stat cards */}
-              <div className="absolute -bottom-4 -left-4 p-4 bg-white rounded-xl border border-slate-200 shadow-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <div style={{
+                position: 'absolute', bottom: '-16px', left: '-16px', padding: '16px',
+                background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0',
+                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '40px', height: '40px', borderRadius: '8px', background: '#ecfdf5',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-slate-500">System Status</div>
-                    <div className="text-sm font-semibold text-slate-900">Operational</div>
+                    <div style={{ fontSize: '14px', fontWeight: 500, color: '#64748b' }}>System Status</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Operational</div>
                   </div>
                 </div>
               </div>
@@ -173,13 +216,13 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="border-t border-slate-100">
-        <div className="max-w-6xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <section style={{ borderTop: '1px solid #f1f5f9' }}>
+        <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '48px 24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '32px' }}>
             {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl font-light text-slate-900 tracking-tight">{stat.value}</div>
-                <div className="text-sm font-medium text-slate-500 mt-1">{stat.label}</div>
+              <div key={stat.label} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '30px', fontWeight: 300, color: '#0f172a', letterSpacing: '-0.01em' }}>{stat.value}</div>
+                <div style={{ fontSize: '14px', fontWeight: 500, color: '#64748b', marginTop: '4px' }}>{stat.label}</div>
               </div>
             ))}
           </div>
@@ -187,25 +230,28 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-2xl mb-16">
-            <h2 className="text-4xl font-light text-slate-900 tracking-tight mb-4">
+      <section id="features" style={{ padding: '96px 0', background: '#f8fafc' }}>
+        <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ maxWidth: '672px', marginBottom: '64px' }}>
+            <h2 style={{ fontSize: '36px', fontWeight: 300, color: '#0f172a', letterSpacing: '-0.01em', marginBottom: '16px' }}>
               Everything you need to run your club
             </h2>
-            <p className="text-lg text-slate-600 leading-relaxed">
+            <p style={{ fontSize: '18px', color: '#475569', lineHeight: 1.7 }}>
               Purpose-built tools for cannabis club operations, from member onboarding to end-of-day reporting.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="p-8 bg-white rounded-xl border border-slate-200 hover:border-slate-300 transition-colors"
+                style={{
+                  padding: '32px', background: '#fff', borderRadius: '12px',
+                  border: '1px solid #e2e8f0'
+                }}
               >
-                <h3 className="text-xl font-medium text-slate-900 mb-3">{feature.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                <h3 style={{ fontSize: '20px', fontWeight: 500, color: '#0f172a', marginBottom: '12px' }}>{feature.title}</h3>
+                <p style={{ color: '#475569', lineHeight: 1.7 }}>{feature.description}</p>
               </div>
             ))}
           </div>
@@ -213,51 +259,63 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="bg-slate-900 rounded-2xl p-12 lg:p-16 text-center lg:text-left">
-            <div className="lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
+      <section style={{ padding: '96px 0' }}>
+        <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ background: '#0f172a', borderRadius: '16px', padding: '64px 48px', textAlign: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'center', gap: '48px' }}>
               <div>
-                <h2 className="text-3xl lg:text-4xl font-light text-white tracking-tight mb-4">
+                <h2 style={{ fontSize: 'clamp(30px, 4vw, 36px)', fontWeight: 300, color: '#fff', letterSpacing: '-0.01em', marginBottom: '16px' }}>
                   Ready to streamline your club operations?
                 </h2>
-                <p className="text-lg text-slate-400 leading-relaxed mb-8">
+                <p style={{ fontSize: '18px', color: '#94a3b8', lineHeight: 1.7, marginBottom: '32px' }}>
                   Join South African cannabis clubs using CannaBuy to manage their business with confidence and compliance.
                 </p>
-                <div className="flex flex-wrap gap-4">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
                   <Link
                     href="/login"
-                    className="inline-flex items-center justify-center text-base font-medium bg-white text-slate-900 px-8 py-3.5 rounded-lg hover:bg-slate-100 transition-colors"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '16px', fontWeight: 500, background: '#fff', color: '#0f172a',
+                      padding: '14px 32px', borderRadius: '8px', textDecoration: 'none'
+                    }}
                   >
                     Get started
                   </Link>
                   <Link
                     href="/admin/diagnostics"
-                    className="inline-flex items-center justify-center text-base font-medium text-white bg-slate-800 px-8 py-3.5 rounded-lg hover:bg-slate-700 transition-colors"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '16px', fontWeight: 500, color: '#fff', background: '#1e293b',
+                      padding: '14px 32px', borderRadius: '8px', textDecoration: 'none'
+                    }}
                   >
                     System status
                   </Link>
                 </div>
               </div>
-              <div className="hidden lg:block">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl" />
-                  <div className="relative p-8 bg-slate-800 rounded-xl border border-slate-700">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                        <div className="flex-1 h-2 bg-slate-700 rounded" />
-                        <div className="w-16 h-2 bg-slate-600 rounded" />
+              <div style={{ display: 'none' }}>
+                <div style={{ position: 'relative' }}>
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(90deg, rgba(59,130,246,0.2), rgba(147,51,234,0.2))',
+                    borderRadius: '50%', filter: 'blur(72px)'
+                  }} />
+                  <div style={{ position: 'relative', padding: '32px', background: '#1e293b', borderRadius: '12px', border: '1px solid #334155' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10b981' }} />
+                        <div style={{ flex: 1, height: '8px', background: '#334155', borderRadius: '4px' }} />
+                        <div style={{ width: '64px', height: '8px', background: '#475569', borderRadius: '4px' }} />
                       </div>
-                      <div className="flex items-center gap-4">
-                        <div className="w-3 h-3 rounded-full bg-blue-500" />
-                        <div className="flex-1 h-2 bg-slate-700 rounded" />
-                        <div className="w-12 h-2 bg-slate-600 rounded" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#3b82f6' }} />
+                        <div style={{ flex: 1, height: '8px', background: '#334155', borderRadius: '4px' }} />
+                        <div style={{ width: '48px', height: '8px', background: '#475569', borderRadius: '4px' }} />
                       </div>
-                      <div className="flex items-center gap-4">
-                        <div className="w-3 h-3 rounded-full bg-purple-500" />
-                        <div className="flex-1 h-2 bg-slate-700 rounded" />
-                        <div className="w-20 h-2 bg-slate-600 rounded" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#a855f7' }} />
+                        <div style={{ flex: 1, height: '8px', background: '#334155', borderRadius: '4px' }} />
+                        <div style={{ width: '80px', height: '8px', background: '#475569', borderRadius: '4px' }} />
                       </div>
                     </div>
                   </div>
@@ -269,26 +327,29 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center">
+      <footer style={{ borderTop: '1px solid #e2e8f0', padding: '48px 0' }}>
+        <div style={{ maxWidth: '1152px', margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '32px', height: '32px', borderRadius: '8px', background: '#0f172a',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
                 <Image
                   src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png"
                   alt="CannaBuy"
                   width={18}
                   height={18}
-                  className="object-contain"
+                  style={{ objectFit: 'contain' }}
                 />
               </div>
-              <span className="text-sm font-medium text-slate-900">CannaBuy</span>
+              <span style={{ fontSize: '14px', fontWeight: 500, color: '#0f172a' }}>CannaBuy</span>
             </div>
-            <div className="flex items-center gap-6 text-sm text-slate-500">
-              <Link href="/login" className="hover:text-slate-900 transition-colors">Sign in</Link>
-              <Link href="/admin/diagnostics" className="hover:text-slate-900 transition-colors">Diagnostics</Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', fontSize: '14px', color: '#64748b' }}>
+              <Link href="/login" style={{ textDecoration: 'none', color: '#64748b' }}>Sign in</Link>
+              <Link href="/admin/diagnostics" style={{ textDecoration: 'none', color: '#64748b' }}>Diagnostics</Link>
             </div>
-            <div className="text-sm text-slate-400">
+            <div style={{ fontSize: '14px', color: '#94a3b8' }}>
               For licensed South African cannabis clubs
             </div>
           </div>
