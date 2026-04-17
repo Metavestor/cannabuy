@@ -35,12 +35,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from('user_profiles')
         .select('*')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
 
       if (error || !data) return null
       return data as UserProfile
     },
     []
+  )
+
+  const bootstrapProfile = useCallback(async (): Promise<UserProfile | null> => {
+    if (!hasSupabaseConfig()) return null
+
+    try {
+      const response = await fetch('/api/auth/bootstrap-profile', { method: 'POST' })
+      const payload = await response.json().catch(() => null)
+      if (!response.ok) {
+        console.warn('[AuthContext] bootstrap-profile failed:', payload?.error ?? response.statusText)
+        return null
+      }
+
+      return (payload?.profile ?? null) as UserProfile | null
+    } catch (error) {
+      console.warn('[AuthContext] bootstrap-profile request failed:', error)
+      return null
+    }
+  }, [])
+
+  const loadSessionUser = useCallback(
+    async (currentSession: Session | null) => {
+      setSession(currentSession)
+
+      if (!currentSession?.user) {
+        setUser(null)
+        return
+      }
+
+      const userId = currentSession.user.id
+      const userEmail = currentSession.user.email ?? ''
+
+      setUser({
+        id: userId,
+        email: userEmail,
+        profile: null,
+      })
+
+      let profile = await fetchProfile(userId)
+      if (!profile) {
+        const bootstrapped = await bootstrapProfile()
+        profile = bootstrapped ?? (await fetchProfile(userId))
+      }
+
+      setUser({
+        id: userId,
+        email: userEmail,
+        profile,
+      })
+    },
+    [bootstrapProfile, fetchProfile]
   )
 
   const refreshProfile = useCallback(async () => {
@@ -62,43 +113,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase().auth.onAuthStateChange(async (_event, session) => {
-      setSession(session as Session | null)
-      if (session?.user) {
-        const profile = await fetchProfile(session.user.id)
-        setUser({
-          id: session.user.id,
-          email: session.user.email ?? '',
-          profile,
+    } = supabase().auth.onAuthStateChange((_event, session) => {
+      void loadSessionUser(session as Session | null)
+        .catch((error) => {
+          console.warn('[AuthContext] auth state sync failed:', error)
         })
-      } else {
-        setUser(null)
-      }
-      setIsLoading(false)
+        .finally(() => setIsLoading(false))
     })
 
     // Initial session check
     supabase()
       .auth.getSession()
       .then(({ data: { session } }) => {
-        setSession(session as Session | null)
-        if (session?.user) {
-          fetchProfile(session.user.id).then((profile) => {
-            setUser({
-              id: session.user.id,
-              email: session.user.email ?? '',
-              profile,
-            })
-            setIsLoading(false)
+        void loadSessionUser(session as Session | null)
+          .catch((error) => {
+            console.warn('[AuthContext] initial session load failed:', error)
           })
-        } else {
-          setIsLoading(false)
-        }
+          .finally(() => setIsLoading(false))
       })
       .catch(() => setIsLoading(false))
 
     return () => subscription.unsubscribe()
-  }, [fetchProfile])
+  }, [loadSessionUser])
 
   const signIn = async (email: string, password: string) => {
     if (!hasSupabaseConfig()) {
@@ -111,32 +147,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     if (!error) {
-      setSession(data.session)
-      if (data.session?.user) {
-        const userId = data.session.user.id
-        const userEmail = data.session.user.email ?? ''
-
-        // Do not block the sign-in completion on profile hydration.
-        // Some browsers or Supabase setups can delay the profile lookup,
-        // which makes the button appear stuck on "Signing in".
-        setUser({
-          id: userId,
-          email: userEmail,
-          profile: null,
-        })
-
-        fetchProfile(userId)
-          .then((profile) => {
-            setUser({
-              id: userId,
-              email: userEmail,
-              profile,
-            })
-          })
-          .catch(() => {
-            // Keep the authenticated session; profile enrichment is non-fatal.
-          })
-      }
+      void loadSessionUser(data.session ?? null).catch((profileError) => {
+        console.warn('[AuthContext] post-login profile load failed:', profileError)
+      })
     }
 
     return { error: error as Error | null, session: data.session ?? null }
