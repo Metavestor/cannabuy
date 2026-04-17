@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 
 const features = [
   {
@@ -73,12 +72,10 @@ export default function HomePage() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 0 20px rgba(16,185,129,0.3)'
             }}>
-              <Image
-                src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png"
+              <img
+                src="/logo.png"
                 alt="CannaBuy"
-                width={22}
-                height={22}
-                style={{ objectFit: 'contain' }}
+                style={{ width: '22px', height: '22px', objectFit: 'contain' }}
               />
             </div>
             <span style={{
@@ -523,12 +520,10 @@ export default function HomePage() {
               background: 'linear-gradient(135deg, #10b981, #059669)',
               display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
-              <Image
-                src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png"
+              <img
+                src="/logo.png"
                 alt="CannaBuy"
-                width={16}
-                height={16}
-                style={{ objectFit: 'contain' }}
+                style={{ width: '16px', height: '16px', objectFit: 'contain' }}
               />
             </div>
             <span style={{ fontSize: '14px', fontWeight: 600, color: '#94a3b8' }}>CannaBuy</span>
