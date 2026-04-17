@@ -1,413 +1,299 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 
 const features = [
   {
-    icon: '⚡',
-    title: 'Fast POS',
-    copy: 'Cashier-first checkout with member lookup, cart actions, and payment close at hand.',
+    title: 'Point of Sale',
+    description: 'Fast, reliable checkout built for cannabis clubs. Member lookup, cart management, and payment processing in one streamlined interface.',
   },
   {
-    icon: '🧾',
-    title: 'Compliance',
-    copy: 'FICA-aware records, refund history, and transaction logs for regulated club operations.',
+    title: 'Compliance Ready',
+    description: 'FICA-aware records, complete transaction logs, and refund tracking designed for South African regulatory requirements.',
   },
   {
-    icon: '📦',
-    title: 'Inventory',
-    copy: 'Live stock visibility and reorder cues scoped to the active club.',
+    title: 'Inventory Control',
+    description: 'Real-time stock visibility with low-stock alerts, reorder management, and product catalog organization per club.',
   },
   {
-    icon: '🏢',
-    title: 'Multi-club',
-    copy: 'Each club stays isolated so staff, products, and reporting do not bleed across tenants.',
+    title: 'Multi-Club Architecture',
+    description: 'Complete tenant isolation between locations. Staff, products, and reporting stay separate and secure.',
   },
 ]
 
 const stats = [
-  { value: '99.9%', label: 'uptime focus' },
-  { value: 'RLS', label: 'security model' },
-  { value: '1', label: 'club scope' },
-  { value: 'VAT', label: 'ready flows' },
+  { value: '99.9%', label: 'Uptime SLA' },
+  { value: 'RLS', label: 'Row-Level Security' },
+  { value: 'ZA', label: 'Compliance Ready' },
+  { value: 'POS', label: 'Integrated Payments' },
 ]
-
-const rollout = [
-  {
-    title: 'Pilot club',
-    copy: 'Launch with one location and validate the workflow fast.',
-  },
-  {
-    title: 'Growth',
-    copy: 'Expand across clubs while keeping tenant data separate.',
-  },
-  {
-    title: 'Enterprise',
-    copy: 'Roll out with onboarding, diagnostics, and support.',
-  },
-]
-
-const showEnvWarning = Boolean(
-  !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)
-)
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    background:
-      'radial-gradient(circle at 18% 12%, rgba(34,197,94,0.25), transparent 24%), radial-gradient(circle at 82% 16%, rgba(99,102,241,0.2), transparent 24%), linear-gradient(180deg, #050910 0%, #07111a 55%, #f6f8f5 55%, #f8faf8 100%)',
-    color: '#fff',
-  },
-  shell: {
-    maxWidth: '1240px',
-    margin: '0 auto',
-    padding: '20px 20px 64px',
-  },
-  card: {
-    borderRadius: '32px',
-    border: '1px solid rgba(255,255,255,0.1)',
-    background: 'rgba(4, 8, 15, 0.72)',
-    boxShadow: '0 40px 120px rgba(0,0,0,0.42)',
-    backdropFilter: 'blur(20px)',
-  },
-  pill: {
-    borderRadius: '999px',
-    padding: '10px 18px',
-    border: '1px solid rgba(255,255,255,0.14)',
-    background: 'rgba(255,255,255,0.06)',
-    color: '#fff',
-    textDecoration: 'none',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '14px',
-    fontWeight: 600,
-  } as const,
-}
 
 export default function HomePage() {
   return (
-    <main style={styles.page}>
-      <section style={{ position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', left: '-80px', top: '24px', width: '280px', height: '280px', borderRadius: '999px', background: 'rgba(34,197,94,0.18)', filter: 'blur(60px)' }} />
-          <div style={{ position: 'absolute', right: '-50px', top: '12px', width: '320px', height: '320px', borderRadius: '999px', background: 'rgba(99,102,241,0.16)', filter: 'blur(70px)' }} />
-          <div style={{ position: 'absolute', bottom: '-120px', left: '50%', transform: 'translateX(-50%)', width: '900px', height: '240px', borderRadius: '999px', background: 'rgba(34,197,94,0.08)', filter: 'blur(80px)' }} />
+    <main className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        {/* Gradient accent */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/3 w-96 h-96 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full blur-3xl" />
         </div>
 
-        <div style={styles.shell}>
-          <div style={styles.card}>
-            <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <div style={{ width: 52, height: 52, borderRadius: 18, border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.06)', display: 'grid', placeItems: 'center', boxShadow: '0 12px 30px rgba(0,0,0,0.25)' }}>
-                  <img
-                    src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png"
-                    alt="CannaBuy"
-                    style={{ width: 32, height: 32, objectFit: 'contain', display: 'block' }}
-                  />
-                </div>
-                <div>
-                  <div style={{ fontSize: 12, letterSpacing: '0.24em', fontWeight: 700, color: '#86efac', textTransform: 'uppercase' }}>CannaBuy</div>
-                  <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.72)' }}>Cannabis club POS for South Africa</div>
-                </div>
+        <div className="relative max-w-6xl mx-auto px-6 py-20">
+          {/* Navigation - minimal inline */}
+          <nav className="flex items-center justify-between mb-24">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center">
+                <Image
+                  src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png"
+                  alt="CannaBuy"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+              </div>
+              <span className="text-xl font-medium text-slate-900 tracking-tight">CannaBuy</span>
+            </div>
+            <div className="flex items-center gap-8">
+              <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                Sign in
+              </Link>
+              <Link
+                href="/login"
+                className="text-sm font-medium bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 transition-colors"
+              >
+                Get started
+              </Link>
+            </div>
+          </nav>
+
+          {/* Hero Content */}
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 mb-8">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-sm font-medium text-slate-600">Now available for South African clubs</span>
               </div>
 
-              <nav style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end', gap: 10 }}>
-                <Link href="#product" style={styles.pill}>Product</Link>
-                <Link href="#features" style={styles.pill}>Features</Link>
-                <Link href="#rollout" style={styles.pill}>Rollout</Link>
-                <Link href="#contact" style={styles.pill}>Contact</Link>
+              <h1 className="text-5xl lg:text-6xl font-light text-slate-900 leading-[1.1] tracking-tight mb-6">
+                Point of sale built for cannabis clubs
+              </h1>
+
+              <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-lg">
+                CannaBuy unifies point-of-sale, member management, inventory tracking, and compliance reporting in one enterprise-grade platform designed for the South African cannabis industry.
+              </p>
+
+              <div className="flex flex-wrap gap-4">
                 <Link
                   href="/login"
-                  style={{
-                    ...styles.pill,
-                    border: '1px solid rgba(52,211,153,0.38)',
-                    background: 'rgba(52,211,153,0.12)',
-                    color: '#d1fae5',
-                  }}
+                  className="inline-flex items-center justify-center text-base font-medium bg-slate-900 text-white px-8 py-3.5 rounded-lg hover:bg-slate-800 transition-colors"
                 >
-                  Admin login
+                  Start free trial
                 </Link>
-              </nav>
-            </header>
+                <Link
+                  href="#features"
+                  className="inline-flex items-center justify-center text-base font-medium text-slate-700 bg-slate-50 px-8 py-3.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors"
+                >
+                  Learn more
+                </Link>
+              </div>
+            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.02fr 0.98fr', gap: 24, alignItems: 'center', padding: '28px 22px 24px' }}>
-              <div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, borderRadius: 999, border: '1px solid rgba(52,211,153,0.2)', background: 'rgba(52,211,153,0.1)', padding: '10px 16px', fontSize: 12, letterSpacing: '0.26em', fontWeight: 700, color: '#bbf7d0', textTransform: 'uppercase' }}>
-                  <span style={{ width: 8, height: 8, borderRadius: 999, background: '#86efac', display: 'inline-block' }} />
-                  Built for compliant cannabis club operations
+            {/* Product Preview Card */}
+            <div className="relative">
+              <div className="relative rounded-2xl bg-white border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_32px_rgba(0,0,0,0.06)] overflow-hidden">
+                {/* Window controls */}
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+                  <div className="w-3 h-3 rounded-full bg-slate-300" />
+                  <div className="w-3 h-3 rounded-full bg-slate-300" />
+                  <div className="w-3 h-3 rounded-full bg-slate-300" />
+                  <div className="ml-auto text-xs font-medium text-slate-400">CannaBuy POS</div>
                 </div>
 
-                <h1 style={{ marginTop: 20, maxWidth: 700, fontSize: 'clamp(52px, 6.2vw, 68px)', lineHeight: 0.96, letterSpacing: '-0.06em', marginBottom: 0, color: '#fff', fontWeight: 700 }}>
-                  Premium club software for South African cannabis retail.
-                </h1>
-
-                <p style={{ marginTop: 20, maxWidth: 640, fontSize: 18, lineHeight: 1.7, color: 'rgba(255,255,255,0.74)' }}>
-                  CannaBuy unifies point-of-sale, members, inventory, transactions, and compliance in one polished operating system that feels fast on the floor and credible in the boardroom.
-                </p>
-
-                {showEnvWarning ? (
-                  <div style={{ marginTop: 18, borderRadius: 18, border: '1px solid rgba(251,191,36,0.3)', background: 'rgba(251,191,36,0.1)', color: '#fde68a', padding: '14px 16px', fontSize: 13, lineHeight: 1.5 }}>
-                    <strong style={{ display: 'block', marginBottom: 4 }}>Production config missing</strong>
-                    Supabase env vars aren’t set for this deployment yet. The app will stay in demo mode until <code style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace' }}>NEXT_PUBLIC_SUPABASE_URL</code> and one browser key are configured.
-                  </div>
-                ) : null}
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 24 }}>
-                  <Link
-                    href="/login"
-                    style={{
-                      borderRadius: 999,
-                      padding: '14px 22px',
-                      background: 'linear-gradient(135deg, #34d399, #86efac)',
-                      color: '#052e16',
-                      textDecoration: 'none',
-                      fontSize: 14,
-                      fontWeight: 700,
-                      boxShadow: '0 18px 40px rgba(52,211,153,0.25)',
-                    }}
-                  >
-                    Open admin login
-                  </Link>
-                  <Link
-                    href="#contact"
-                    style={{
-                      borderRadius: 999,
-                      padding: '14px 22px',
-                      border: '1px solid rgba(255,255,255,0.16)',
-                      background: 'rgba(255,255,255,0.05)',
-                      color: '#fff',
-                      textDecoration: 'none',
-                      fontSize: 14,
-                      fontWeight: 700,
-                    }}
-                  >
-                    Request a demo
-                  </Link>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 12, marginTop: 28 }}>
-                  {stats.map((stat) => (
-                    <div key={stat.label} style={{ borderRadius: 20, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: 16 }}>
-                      <div style={{ fontSize: 26, lineHeight: 1, fontWeight: 700, color: '#fff' }}>{stat.value}</div>
-                      <div style={{ marginTop: 6, fontSize: 13, color: 'rgba(255,255,255,0.68)' }}>{stat.label}</div>
+                {/* Mock POS Interface */}
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <div className="text-sm font-medium text-slate-500 uppercase tracking-wide">Current Transaction</div>
+                      <div className="text-2xl font-semibold text-slate-900 mt-1">R 610.00</div>
                     </div>
-                  ))}
+                    <div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium border border-emerald-100">
+                      Active
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 mb-6">
+                    {[
+                      { name: 'Durban Poison', variant: '3.5g Flower', price: 'R 200.00' },
+                      { name: 'Cold Creek Kush', variant: '3.5g Flower', price: 'R 210.00' },
+                      { name: 'CBD Oil Tincture', variant: '30ml', price: 'R 200.00' },
+                    ].map((item) => (
+                      <div key={item.name} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-100">
+                        <div>
+                          <div className="font-medium text-slate-900">{item.name}</div>
+                          <div className="text-sm text-slate-500">{item.variant}</div>
+                        </div>
+                        <div className="font-medium text-slate-900">{item.price}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-center">
+                      <div className="text-lg font-semibold text-slate-900">24</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Today</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-center">
+                      <div className="text-lg font-semibold text-slate-900">R 48k</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Revenue</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-slate-50 border border-slate-100 text-center">
+                      <div className="text-lg font-semibold text-slate-900">6</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Low Stock</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div style={{ position: 'relative' }}>
-                <div style={{ position: 'absolute', inset: -20, borderRadius: 34, background: 'rgba(52,211,153,0.12)', filter: 'blur(24px)' }} />
-                <div style={{ position: 'relative', borderRadius: 34, border: '1px solid rgba(255,255,255,0.12)', background: 'linear-gradient(180deg, rgba(9,17,26,0.98), rgba(5,10,18,1))', padding: 18, boxShadow: '0 40px 120px rgba(0,0,0,0.45)', animation: 'floaty 8s ease-in-out infinite' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 14, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div>
-                      <div style={{ fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', fontWeight: 700 }}>Live club workspace</div>
-                      <div style={{ marginTop: 6, fontSize: 18, fontWeight: 700, color: '#fff' }}>CannaClub Gauteng</div>
-                    </div>
-                    <div style={{ borderRadius: 999, border: '1px solid rgba(52,211,153,0.2)', background: 'rgba(52,211,153,0.1)', padding: '7px 12px', fontSize: 12, fontWeight: 700, color: '#bbf7d0' }}>Live</div>
+              {/* Floating stat cards */}
+              <div className="absolute -bottom-4 -left-4 p-4 bg-white rounded-xl border border-slate-200 shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                   </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '0.72fr 1.28fr', gap: 14, marginTop: 14 }}>
-                    <div style={{ borderRadius: 28, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: 16 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                        <div>
-                          <div style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', fontWeight: 700 }}>POS</div>
-                          <div style={{ marginTop: 5, fontSize: 18, fontWeight: 700 }}>Ready for checkout</div>
-                        </div>
-                        <div style={{ borderRadius: 999, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: '6px 10px', fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Live</div>
-                      </div>
-
-                      <div style={{ display: 'grid', gap: 10 }}>
-                        {[
-                          ['Durban Poison', '3.5g', 'R200'],
-                          ['OG Kush', '3.5g', 'R210'],
-                          ['CBD Oil 30ml', '1 unit', 'R200'],
-                        ].map(([name, size, price]) => (
-                          <div key={name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 18, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(3,7,13,0.65)', padding: '12px 14px', fontSize: 13 }}>
-                            <div>
-                              <div style={{ color: '#fff', fontWeight: 600 }}>{name}</div>
-                              <div style={{ color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>{size}</div>
-                            </div>
-                            <div style={{ color: '#86efac', fontWeight: 700 }}>{price}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'grid', gap: 14 }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12 }}>
-                        {[
-                          ['R 48,220', 'Revenue today'],
-                          ['24', 'Transactions'],
-                          ['6', 'Low stock items'],
-                        ].map(([value, label]) => (
-                          <div key={label} style={{ borderRadius: 22, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: 14 }}>
-                            <div style={{ color: '#fff', fontSize: 24, fontWeight: 700, lineHeight: 1 }}>{value}</div>
-                            <div style={{ color: 'rgba(255,255,255,0.65)', marginTop: 6, fontSize: 12 }}>{label}</div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div style={{ borderRadius: 28, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: 16 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 14, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                          <div>
-                            <div style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', fontWeight: 700 }}>Checkout lane</div>
-                            <div style={{ marginTop: 5, fontSize: 18, fontWeight: 700 }}>Ready for payment</div>
-                          </div>
-                          <div style={{ borderRadius: 999, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: '6px 10px', fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Live</div>
-                        </div>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 12, marginTop: 14 }}>
-                          <div style={{ display: 'grid', gap: 10 }}>
-                            {[
-                              ['Durban Poison', '3.5g', 'R200'],
-                              ['OG Kush', '3.5g', 'R210'],
-                              ['CBD Oil 30ml', '1 unit', 'R200'],
-                            ].map(([name, size, price]) => (
-                              <div key={name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 18, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(3,7,13,0.65)', padding: '12px 14px', fontSize: 13 }}>
-                                <div>
-                                  <div style={{ color: '#fff', fontWeight: 600 }}>{name}</div>
-                                  <div style={{ color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>{size}</div>
-                                </div>
-                                <div style={{ color: '#86efac', fontWeight: 700 }}>{price}</div>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div style={{ display: 'grid', gap: 10 }}>
-                            <div style={{ borderRadius: 18, border: '1px solid rgba(52,211,153,0.2)', background: 'rgba(52,211,153,0.1)', padding: 14 }}>
-                              <div style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#bbf7d0', fontWeight: 700 }}>Support</div>
-                              <div style={{ marginTop: 8, fontSize: 14, fontWeight: 600, color: '#fff' }}>Diagnostics ready</div>
-                            </div>
-                            <div style={{ borderRadius: 18, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(3,7,13,0.8)', padding: 14 }}>
-                              <div style={{ fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', fontWeight: 700 }}>Activity</div>
-                              <div style={{ marginTop: 16, display: 'flex', alignItems: 'end', gap: 6, height: 72 }}>
-                                {[18, 28, 22, 34, 26, 38, 30, 42].map((h, i) => (
-                                  <div key={i} style={{ flex: 1, height: h, borderRadius: '8px 8px 0 0', background: 'linear-gradient(180deg, #34d399, #86efac)' }} />
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  <div>
+                    <div className="text-sm font-medium text-slate-500">System Status</div>
+                    <div className="text-sm font-semibold text-slate-900">Operational</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
-      <section id="product" style={{ padding: '16px 24px 0', scrollMarginTop: 96 }}>
-        <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-          <div style={{ color: '#86efac', fontSize: 12, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Product showcase</div>
-          <h2 style={{ marginTop: 10, color: '#fff', fontSize: 48, lineHeight: 1.02, letterSpacing: '-0.04em', maxWidth: 700, marginBottom: 0 }}>
-            A real club workspace, not a brochure.
-          </h2>
-          <p style={{ marginTop: 14, maxWidth: 740, color: 'rgba(255,255,255,0.72)', fontSize: 17, lineHeight: 1.7 }}>
-            The home page should show the product itself so the brand feels like a system operators can trust.
-          </p>
-        </div>
-      </section>
-
-      <section id="features" style={{ maxWidth: 1240, margin: '0 auto', padding: '28px 24px 30px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', marginBottom: 14 }}>
-          <div>
-            <div style={{ color: '#16a34a', fontSize: 12, fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Commercial pillars</div>
-            <h2 style={{ marginTop: 10, color: '#0f172a', fontSize: 'clamp(32px, 4vw, 48px)', lineHeight: 1.02, letterSpacing: '-0.05em', maxWidth: 720, marginBottom: 0 }}>
-              Built to look premium, and built to operate.
-            </h2>
-          </div>
-          <p style={{ margin: 0, maxWidth: 460, color: '#475569', fontSize: 16, lineHeight: 1.7 }}>
-            The page now presents CannaBuy as a commercial product suite instead of a plain admin shell.
-          </p>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 14 }}>
-          {features.map((feature) => (
-            <article key={feature.title} style={{ borderRadius: 26, border: '1px solid rgba(15,23,42,0.08)', background: 'linear-gradient(180deg, #ffffff 0%, #f8faf8 100%)', padding: 20, boxShadow: '0 18px 40px rgba(15,23,42,0.06)' }}>
-              <div style={{ width: 46, height: 46, borderRadius: 16, display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, rgba(22,163,74,0.14), rgba(134,239,172,0.34))', color: '#166534', fontSize: 20, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7)' }}>
-                {feature.icon}
-              </div>
-              <h3 style={{ marginTop: 16, color: '#0f172a', fontSize: 19, lineHeight: 1.2 }}>{feature.title}</h3>
-              <p style={{ marginTop: 8, color: '#475569', fontSize: 14, lineHeight: 1.7 }}>{feature.copy}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="rollout" style={{ maxWidth: 1240, margin: '0 auto', padding: '8px 24px 20px' }}>
-        <div style={{ borderRadius: 30, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(4,8,15,0.68)', padding: 24, boxShadow: '0 30px 100px rgba(0,0,0,0.3)' }}>
-          <div style={{ color: '#bbf7d0', fontSize: 12, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Rollout options</div>
-          <h2 style={{ marginTop: 10, color: '#fff', fontSize: 42, lineHeight: 1.05, marginBottom: 0, maxWidth: 700 }}>
-            Packages that feel commercially real.
-          </h2>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 14, marginTop: 18 }}>
-            {rollout.map((card) => (
-              <div key={card.title} style={{ borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', padding: 20 }}>
-                <div style={{ color: '#86efac', fontSize: 12, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase' }}>{card.title}</div>
-                <p style={{ marginTop: 10, color: 'rgba(255,255,255,0.72)', fontSize: 15, lineHeight: 1.6 }}>{card.copy}</p>
+      {/* Stats Section */}
+      <section className="border-t border-slate-100">
+        <div className="max-w-6xl mx-auto px-6 py-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-3xl font-light text-slate-900 tracking-tight">{stat.value}</div>
+                <div className="text-sm font-medium text-slate-500 mt-1">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="contact" style={{ maxWidth: 1240, margin: '0 auto', padding: '16px 24px 28px' }}>
-        <div style={{ borderRadius: 30, border: '1px solid rgba(52,211,153,0.2)', background: 'linear-gradient(180deg, rgba(10,20,31,0.98), rgba(5,10,18,0.96))', padding: 24, boxShadow: '0 35px 110px rgba(0,0,0,0.35)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-            <div style={{ maxWidth: 720 }}>
-              <div style={{ color: '#86efac', fontSize: 12, fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Next step</div>
-              <h2 style={{ marginTop: 10, marginBottom: 0, color: '#fff', fontSize: 42, lineHeight: 1.05, letterSpacing: '-0.04em' }}>
-                Ready for admin login, testing, and production rollout.
-              </h2>
-            </div>
+      {/* Features Section */}
+      <section id="features" className="py-24 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-2xl mb-16">
+            <h2 className="text-4xl font-light text-slate-900 tracking-tight mb-4">
+              Everything you need to run your club
+            </h2>
+            <p className="text-lg text-slate-600 leading-relaxed">
+              Purpose-built tools for cannabis club operations, from member onboarding to end-of-day reporting.
+            </p>
+          </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <Link
-                href="/login"
-                style={{
-                  borderRadius: 999,
-                  padding: '14px 22px',
-                  background: 'linear-gradient(135deg, #34d399, #86efac)',
-                  color: '#052e16',
-                  textDecoration: 'none',
-                  fontSize: 14,
-                  fontWeight: 700,
-                }}
+          <div className="grid md:grid-cols-2 gap-6">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="p-8 bg-white rounded-xl border border-slate-200 hover:border-slate-300 transition-colors"
               >
-                Sign in
-              </Link>
-              <Link
-                href="/admin/diagnostics"
-                style={{
-                  borderRadius: 999,
-                  padding: '14px 22px',
-                  border: '1px solid rgba(255,255,255,0.16)',
-                  background: 'rgba(255,255,255,0.05)',
-                  color: '#fff',
-                  textDecoration: 'none',
-                  fontSize: 14,
-                  fontWeight: 700,
-                }}
-              >
-                Open diagnostics
-              </Link>
+                <h3 className="text-xl font-medium text-slate-900 mb-3">{feature.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="bg-slate-900 rounded-2xl p-12 lg:p-16 text-center lg:text-left">
+            <div className="lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
+              <div>
+                <h2 className="text-3xl lg:text-4xl font-light text-white tracking-tight mb-4">
+                  Ready to streamline your club operations?
+                </h2>
+                <p className="text-lg text-slate-400 leading-relaxed mb-8">
+                  Join South African cannabis clubs using CannaBuy to manage their business with confidence and compliance.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center justify-center text-base font-medium bg-white text-slate-900 px-8 py-3.5 rounded-lg hover:bg-slate-100 transition-colors"
+                  >
+                    Get started
+                  </Link>
+                  <Link
+                    href="/admin/diagnostics"
+                    className="inline-flex items-center justify-center text-base font-medium text-white bg-slate-800 px-8 py-3.5 rounded-lg hover:bg-slate-700 transition-colors"
+                  >
+                    System status
+                  </Link>
+                </div>
+              </div>
+              <div className="hidden lg:block">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl" />
+                  <div className="relative p-8 bg-slate-800 rounded-xl border border-slate-700">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                        <div className="flex-1 h-2 bg-slate-700 rounded" />
+                        <div className="w-16 h-2 bg-slate-600 rounded" />
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="w-3 h-3 rounded-full bg-blue-500" />
+                        <div className="flex-1 h-2 bg-slate-700 rounded" />
+                        <div className="w-12 h-2 bg-slate-600 rounded" />
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="w-3 h-3 rounded-full bg-purple-500" />
+                        <div className="flex-1 h-2 bg-slate-700 rounded" />
+                        <div className="w-20 h-2 bg-slate-600 rounded" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <style jsx global>{`
-        @keyframes floaty {
-          0%, 100% { transform: translateY(0px) }
-          50% { transform: translateY(-8px) }
-        }
-      `}</style>
+      {/* Footer */}
+      <footer className="border-t border-slate-200 py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center">
+                <Image
+                  src="https://raw.githubusercontent.com/Metavestor/cannabuy/main/cannaybuy-platform/logo.png"
+                  alt="CannaBuy"
+                  width={18}
+                  height={18}
+                  className="object-contain"
+                />
+              </div>
+              <span className="text-sm font-medium text-slate-900">CannaBuy</span>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-slate-500">
+              <Link href="/login" className="hover:text-slate-900 transition-colors">Sign in</Link>
+              <Link href="/admin/diagnostics" className="hover:text-slate-900 transition-colors">Diagnostics</Link>
+            </div>
+            <div className="text-sm text-slate-400">
+              For licensed South African cannabis clubs
+            </div>
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }
